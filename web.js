@@ -8,15 +8,21 @@ app.set('view engine', 'ejs');
 app.set('view options', { layout: false });
 app.set('views', __dirname + '/views');
 
-// Configuration
+// 設定
 app.configure(function(){
-  app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/public')); // 静的ファイルの場所
 });
 
+// インクルード
+var login = require('./modules/login');
+
+// ルーティング
 app.get('/', function(req, res) {
-    res.render('login.ejs', {locals:{msg:'Hello Kinoko!'}});
+    res.render('index.ejs', {locals:{msg:'Hello Kinoko!'}});
 });
+app.get('/login', login.disp);
 
+// サーバー起動
 var port = process.env.PORT || 8000;
 app.listen(port, function(){
     console.log("WebApp start! Listening on " + port);
