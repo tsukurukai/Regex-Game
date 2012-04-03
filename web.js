@@ -10,7 +10,11 @@ app.set('views', __dirname + '/views');
 
 // 設定
 app.configure(function(){
-  app.use(express.static(__dirname + '/public')); // 静的ファイルの場所
+    app.use(express.bodyParser());
+    app.use(express.methodOverride());
+    app.use(express.cookieParser());
+    app.use(express.session({secret: 'regex'}));
+    app.use(express.static(__dirname + '/public')); // 静的ファイルの場所
 });
 
 // インクルード
@@ -20,7 +24,7 @@ var login = require('./modules/login');
 app.get('/', function(req, res) {
     res.render('index.ejs', {locals:{msg:'Hello Kinoko!'}});
 });
-app.get('/login', login.disp);
+app.get('/login', login.login);
 
 // サーバー起動
 var port = process.env.PORT || 8000;
