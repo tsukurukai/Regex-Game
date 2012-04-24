@@ -22,9 +22,18 @@ var login = require('./modules/login');
 
 // ルーティング
 app.get('/', function(req, res) {
-    res.render('index.ejs', {locals:{msg:'Hello Kinoko!'}});
+    res.render('index.ejs', {locals:{msg:'ログイン'}});
 });
-app.get('/login', login.login);
+app.get('/login', function(req,res) {
+    if (req.session.oauth) {
+        res.redirect('/top');
+    } else {
+       login.login(req, res);
+    }
+});
+app.get('/top', function(req, res) {
+    res.render('top.ejs', {locals:{msg:'Hello Kinoko!'}});
+});
 
 // サーバー起動
 var port = process.env.PORT || 8000;

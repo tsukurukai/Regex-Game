@@ -6,8 +6,8 @@ exports.disp = function(req, res) {
 // OAuth認証情報
 var DOMAIN = 'localhost';
 var PORT = '8000';
-var consumerkey = 'key';
-var consumerSecret = 'secret';
+var consumerkey = '';
+var consumerSecret = '';
 var oauth_mod = require('oauth').OAuth;
 var oauth = new oauth_mod(
     'https://api.twitter.com/oauth/request_token',
@@ -15,7 +15,7 @@ var oauth = new oauth_mod(
     consumerkey,
     consumerSecret,
     '1.0',
-    'http://' + DOMAIN + ':' + PORT + '/login',
+    'http://' + DOMAIN + ':' + PORT + '/top',
     'HMAC-SHA1'
 );
 
@@ -31,7 +31,7 @@ exports.login = function(req, res) {
                     console.log('アクセストークンが取得できたので、ログイン成功');
                     req.session.regenerate(function(){
                         req.session.user = result.screen_name;
-                        res.redirect('/');
+                        res.redirect('/top');
                     });
                 }
             });
