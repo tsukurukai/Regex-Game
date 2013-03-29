@@ -1,1 +1,1 @@
-web: node web.js
+web: bundle exec ruby web.rb -p $PORT
