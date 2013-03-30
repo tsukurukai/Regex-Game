@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'json'
 require 'erb'
+require 'json'
 
 require 'sinatra/reloader' if development?
 
@@ -15,19 +16,23 @@ get '/c/:course_id/q/:quiz_id' do
   @course_id = params[:course_id]
   @quiz_id   = params[:quiz_id]
   # quiz を取得
-  get_quiz(@course_id, @quiz_id)
+  @quiz = get_quiz(@course_id, @quiz_id)
   erb :quiz
 end
 
 # quiz
 # answer check
 post '/c/:course_id/q/:quiz_id/answer' do
+  p params[:input]
   @course_id = params[:course_id]
   @quiz_id = params[:quiz_id]
   @answer =  params[:answer]
   # answer check
   check_answer(@answer, @course_id, @quiz_id)
-  erb :quiz
+
+  ok_match = %w[Banana Apple Book]
+  ok_not_match = %w[HTML5]
+  { success: true, ok_match: ok_match, ok_not_match: ok_not_match }.to_json
 end
 
 # result
@@ -53,14 +58,15 @@ def get_quiz(course_id, quiz_id)
   # quiz = get_quiz_from_db(courser_id, quiz_id)
   quiz = { course_id:1, quiz_id:2, match:%w[apple banana], unmatch:%w[HTML5 Android]}.to_json
   p quiz
+  quiz
 end
 
 # 入力された回答が正しいかチェックする
 def check_answer(answer, course_id, quiz_id)
   # quiz を取得
-  get_quiz(course_id, quiz_id)
+  quiz = get_quiz(course_id, quiz_id)
   # quiz に対して正規表現を実行する
-  exec_regex_expression(answer, quiz) 
+  exec_regex_expression(answer, quiz)
 end
 
 # 入力された回答が正しいかチェックする

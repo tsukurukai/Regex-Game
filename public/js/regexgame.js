@@ -17,16 +17,34 @@ $(function(){
           not_match_list.each(function(){ ng(this) });
       },
       test: function(input){
+        var ok_match_words = [],
+            ok_not_match_words = [];
         this.clear();
-        if (input && input !== '') {
-          var re = new RegExp(input);
-          match_list.each(function(){
-            if(this.innerText && re.test(this.innerText)) ok(this);
-          });
-          not_match_list.each(function(){
-            if(this.innerText && !(re.test(this.innerText))) ok(this);
-          });
-        }
+        $.ajax({
+          scriptCharset: 'utf-8',
+          type: "POST",
+          url: location.href+'/answer',
+          data: {
+            'input' : input,
+          },
+          success: function(json) {
+            console.log(json);
+            if (json.success) {
+              ok_match_words = json.ok_match;
+              ok_not_match_words = json.ok_not_match;
+            }
+            match_list.each(function(){
+              if(ok_match_words.indexOf($(this).html()) !== -1) ok(this);
+            });
+            not_match_list.each(function(){
+              if(ok_not_match_words.indexOf($(this).html()) !== -1) ok(this);
+            });
+          },
+          error: function(request, status, e) {
+            alert("Internal Serve Error.");
+          },
+          dataType: 'json'
+        });
       },
       isAllOk: function(){
         var result = true;
