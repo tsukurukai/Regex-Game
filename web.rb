@@ -32,11 +32,7 @@ post '/c/:course_id/q/:quiz_id/answer' do
   p @answer 
   p '***************************'
   # answer check
-  result = check_answer_and_get_result(@answer, @course_id, @quiz_id)
-
-  ok_match = %w[Banana Apple Book]
-  ok_not_match = %w[HTML5]
-  { success: true, ok_match: ok_match, ok_not_match: ok_not_match }.to_json
+  check_answer_and_get_result(@answer, @course_id, @quiz_id).to_json
 end
 
 # result 
@@ -87,29 +83,35 @@ end
 
 # 入力された回答が正しいかチェックする
 def exec_regular_expression(answer, quiz)
-  # quiz 一つ一つに対して実行
-  # quiz.each.do |q|
-    # 実行する
-    regex_expression = convert_regex(answer)
-    ok_match = quiz[:match].select {|item| regex_expression =~ item}
-    p '***************************'
-    p regex_expression
-    p quiz[:match] 
-    p ok_match
-    p '***************************'
+  # 入力された値を正規表現に変換
+  regex_expression = convert_regex(answer)
+  # match させたいリスト
+  ok_match = quiz[:match].select {|item| regex_expression =~ item}
+  p '********* match result **************'
+  p regex_expression
+  p quiz[:match] 
+  p ok_match
+  p '********* /match result **************'
 
-    # answer = '^\w+$'
-    # answer = Regexp.new(answer)
-    # string = 'app--le'
-    # p '***************************'
-    # p answer
-    # p string 
-    # p answer =~ string
-    # p '***************************'
+  # unmatch させたいリスト
+  ok_unmatch = quiz[:unmatch].select {|item| regex_expression =~ item}
+  p '********* unmatch result **************'
+  p regex_expression
+  p quiz[:unmatch] 
+  p ok_unmatch
+  p '********* /unmatch result **************'
 
-    # 成功していたらハッシュに格納
-    # 
-  # end 
+  # 以下の条件を満たす時、「正解」扱い
+  # matchでヒットした数と問題の数がイコール かつ
+  # unmatchでヒットした数が0
+  if ok_match.size == quiz[:match] && ok_unmatch.size == 0
+    status = true
+  else 
+    status = false 
+  end
+
+  # ハッシュに格納
+  { success:status, ok_match:ok_match, ok_unmatch:ok_unmatch }
 end
 
 # 文字列を正規表現の形式に変換します
