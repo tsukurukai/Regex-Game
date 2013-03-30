@@ -2,32 +2,32 @@ courses:
   - name: test_course1
     quizes:
       -
-        matchs:
+        matches:
           - Banana
           - Apple
-        nomatchs:
+        unmatches:
           - HTML5
           - hash_tag
       -
-        matchs:
+        matches:
           - Banana
           - Apple
-        nomatchs:
+        unmatches:
           - HTML5
           - hash_tag
   - name: test_course2
     quizes:
       -
-        matchs:
+        matches:
           - Banana
           - Apple
-        nomatchs:
+        unmatches:
           - HTML5
           - hash_tag
       -
-        matchs:
+        matches:
           - satot@hoge.com
           - Apple
-        nomatchs:
+        unmatches:
           - HTML5
           - hash_tag
