@@ -61,12 +61,17 @@ end
 post '/c/:course_id/result/put' do
   @course_id = params[:course_id]
   @name      = params[:name]
+  @time      = params[:time]
+  # ユーザ名と時間をDBに登録
+  RankingModel.new.insert(@name.to_s, @time.to_s)
   redirect "/c/#{@course_id}/result"
 end
 
 # result
 get '/c/:course_id/result' do
   @course_id = params[:course_id]
+  # ランキング一覧を取得
+  @ranking_list = RankingModel.new.getList(1, 100)
   erb :result
 end
 

@@ -42,7 +42,7 @@ end
 
 
 class RankingModel < BaseModel
-    def insert(name, time)
+  def insert(name, time)
         coll = @db.collection('ranking')
 		h = Hash.new
 		h['name'] = name
