@@ -11,25 +11,26 @@ courses:
           - hash_tag
       -
         matches:
-          - Banana
-          - Apple
+          - Tiger 
+          - Cat 
         unmatches:
-          - HTML5
-          - hash_tag
+          - Whale 
+          - Shark  
   - name: test_course2
     id: 2
     quizes:
       -
         matches:
-          - Banana
-          - Apple
+          - Giants 
+          - Carp
+          - Tigers
         unmatches:
           - HTML5
           - hash_tag
       -
         matches:
           - satot@hoge.com
-          - Apple
+          - kariyay@hoge.com 
         unmatches:
-          - HTML5
+          - tomidokoror@hoge.com 
           - hash_tag
