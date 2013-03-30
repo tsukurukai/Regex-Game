@@ -38,14 +38,15 @@ post '/c/:course_id/q/:quiz_id/answer' do
   @course_id = params[:course_id]
   @quiz_id = params[:quiz_id]
   @answer =  params[:answer]
-  p '***************************'
+  p '********** input answer *************'
   p @answer 
-  p '***************************'
+  p '********** /input answer *************'
   # answer check
   check_answer_and_get_result(@answer, @course_id, @quiz_id).to_json
 end
 
 # result
+# input answerer's name
 get '/c/:course_id/result/input' do
   @course_id = params[:course_id]
   @time = params[:time]
@@ -55,29 +56,28 @@ end
 
 # result
 # register answerer's name
+#  and redirect to result list
 post '/c/:course_id/result/put' do
   @course_id = params[:course_id]
   @name      = params[:name]
   @time      = params[:time]
-  # ユーザ名と時間をDBに登録
-  RankingModel.new.insert(@name.to_s, @time.to_s)
+  # register answerer's name and record-time
+  RankingModel.new.insert(@name.to_s, @time.to_i)
   redirect "/c/#{@course_id}/result"
 end
 
 # result
 get '/c/:course_id/result' do
   @course_id = params[:course_id]
-  # ランキング一覧を取得
-  @ranking_list = RankingModel.new.getList(1, 100)
-  p "%%%%%%%%%%%%%%%%%%%%%"
-  p @ranking_list
-  p "%%%%%%%%%%%%%%%%%%%%%"
+  # get all ranking-list from db
+  tmp_ranking_list = RankingModel.new.getList(1, 30)
+  @ranking_list = tmp_ranking_list.map {|item| {name:item["name"], time:(item["time"].to_i/1000).truncate}}
   erb :result
 end
 
-
+## ====================
 ## methods
-
+## ====================
 # 入力された回答が正しいかチェックする
 def check_answer_and_get_result(answer, course_id, quiz_id)
   # quiz を取得
@@ -106,9 +106,9 @@ def exec_regular_expression(answer, quiz)
   p ok_unmatch
   p '********* /unmatch result **************'
 
-  # 以下の条件を満たす時、「正解」扱い
-  # matchでヒットした数と問題の数がイコール かつ
-  # unmatchでヒットした数と問題の数がイコール
+  # regard as "correct answer" under these conditions: 
+  # equal the count of ok_match count to the count of matches of quiz and
+  # equal the count of ok_unmatch count to the count of unmatches of quiz
   if ok_match.size == quiz["matches"].size && ok_unmatch.size == quiz["unmatches"].size
     status = true
   else 
@@ -118,11 +118,11 @@ def exec_regular_expression(answer, quiz)
   p status 
   p '********* /statu result **************'
 
-  # ハッシュに格納
+  # contain in hash
   { success:status, ok_match:ok_match, ok_unmatch:ok_unmatch }
 end
 
-# 文字列を正規表現の形式に変換します
+# convert answer from string to Regular Expression type
 def convert_regex(answer)
     regex_string = '^'
     regex_string << answer.gsub('¥', '\\')
