@@ -38,9 +38,6 @@ post '/c/:course_id/q/:quiz_id/answer' do
   @course_id = params[:course_id]
   @quiz_id = params[:quiz_id]
   @answer =  params[:answer]
-  p '********** input answer *************'
-  p @answer 
-  p '********** /input answer *************'
   # answer check
   check_answer_and_get_result(@answer, @course_id, @quiz_id).to_json
 end
@@ -50,7 +47,7 @@ end
 get '/c/:course_id/result/input' do
   @course_id = params[:course_id]
   @time = params[:time]
-  @time_for_view = (@time.to_i/1000).truncate
+  @time_for_view = @time.to_f/1000
   erb :result_input
 end
 
@@ -71,7 +68,7 @@ get '/c/:course_id/result' do
   @course_id = params[:course_id]
   # get all ranking-list from db
   tmp_ranking_list = RankingModel.new.getList(1, 30)
-  @ranking_list = tmp_ranking_list.map {|item| {name:item["name"], time:(item["time"].to_i/1000).truncate}}
+  @ranking_list = tmp_ranking_list.map {|item| {name:item["name"], time:item["time"].to_f/1000}}
   erb :result
 end
 
@@ -92,32 +89,17 @@ def exec_regular_expression(answer, quiz)
   regex_expression = convert_regex(answer)
   # match させたいリスト
   ok_match = quiz["matches"].select {|item| regex_expression =~ item}
-  p '********* match result **************'
-  p regex_expression
-  p quiz["matches"] 
-  p ok_match
-  p '********* /match result **************'
-
   # unmatch させたいリスト
   ok_unmatch = quiz["unmatches"].reject {|item| regex_expression =~ item}
-  p '********* unmatch result **************'
-  p regex_expression
-  p quiz["unmatches"] 
-  p ok_unmatch
-  p '********* /unmatch result **************'
 
   # regard as "correct answer" under these conditions: 
-  # equal the count of ok_match count to the count of matches of quiz and
-  # equal the count of ok_unmatch count to the count of unmatches of quiz
+  # - equal the count of ok_match count to the count of matches of quiz and
+  # - equal the count of ok_unmatch count to the count of unmatches of quiz
   if ok_match.size == quiz["matches"].size && ok_unmatch.size == quiz["unmatches"].size
     status = true
   else 
     status = false 
   end
-  p '********* status result **************'
-  p status 
-  p '********* /statu result **************'
-
   # contain in hash
   { success:status, ok_match:ok_match, ok_unmatch:ok_unmatch }
 end
