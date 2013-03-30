@@ -67,10 +67,9 @@ $(function(){
           url: location.href+'/q/'+qid+'/answer',
           data: { 'answer' : input },
           success: function(json) {
-            if (!json.success) {
-              ok_match_words = json.ok_match;
-              ok_not_match_words = json.ok_unmatch;
-            }
+            console.log(json);
+            ok_match_words = json.ok_match;
+            ok_not_match_words = json.ok_unmatch;
             match_list.each(function(){
               if($.inArray($(this).html(), ok_match_words) !== -1) ok(this);
             });
