@@ -103,3 +103,8 @@ li.result_item {
   margin-left: 80px;
 }
 
+#result_time {
+  color: red;
+  font-style: bold;
+  font-size: 120%;
+}
