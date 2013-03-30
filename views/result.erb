@@ -14,15 +14,9 @@
   <h2>Cource&nbsp;<%= @course_id %>&nbsp;RANKING</h2>
   <form>
     <ol id="result_list">
-      <li class="result_item">@satos</li>
-      <li class="result_item">@satos</li>
-      <li class="result_item">@satos</li>
-      <li class="result_item">@satos</li>
-      <li class="result_item">@satos</li>
-      <li class="result_item">@satos</li>
-      <li class="result_item">@satos</li>
-      <li class="result_item">@satos</li>
-      <li class="result_item">@satos</li>
+    <% @ranking_list.each do |result| %>
+      <li class="result_item"><%= result["name"] %>&nbsp;:&nbsp;<%= result["time"] %>[s]</li>
+    <% end %>
   </ol>
   </form>
 </div>

@@ -69,6 +69,9 @@ get '/c/:course_id/result' do
   @course_id = params[:course_id]
   # ランキング一覧を取得
   @ranking_list = RankingModel.new.getList(1, 100)
+  p "%%%%%%%%%%%%%%%%%%%%%"
+  p @ranking_list
+  p "%%%%%%%%%%%%%%%%%%%%%"
   erb :result
 end
 
