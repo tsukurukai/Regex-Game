@@ -25,7 +25,7 @@ $(function(){
           type: "POST",
           url: location.href+'/answer',
           data: {
-            'input' : input,
+            'answer' : input,
           },
           success: function(json) {
             console.log(json);
