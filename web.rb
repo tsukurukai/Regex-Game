@@ -48,6 +48,8 @@ end
 # result
 get '/c/:course_id/result/input' do
   @course_id = params[:course_id]
+  @time = params[:time]
+  @time_for_view = (@time.to_i/1000).truncate
   erb :result_input
 end
 
