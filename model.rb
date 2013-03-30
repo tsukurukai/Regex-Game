@@ -59,7 +59,7 @@ class RankingModel < BaseModel
     def getList(page=1, limit=5)
         i=1;
         list = Array.new
-        @coll.find().sort(:time => :desc).each do |slice|
+        @coll.find().sort(:time).each do |slice|
             if i > (page -1) * limit && i <= (page) * limit 
                 list.push(slice)
             end
@@ -70,7 +70,7 @@ class RankingModel < BaseModel
 
     def find(username)
         i=1;
-        @coll.find().sort(:time => :desc).each do |slice|
+        @coll.find().sort(:time).each do |slice|
             if slice['name'] == username
                 return i;
             end
