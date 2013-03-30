@@ -34,6 +34,7 @@ $(function(){
               } else {
                 $('#match_list').empty();
                 $('#not_match_list').empty();
+                $('#reg_input').val('');
                 $.each(json.quiz.matches, function(){ $('#match_list').append('<li>'+this+'</li>') });
                 $.each(json.quiz.unmatches, function(){ $('#not_match_list').append('<li>'+this+'</li>') });
                 match_list = $('#match_list li');
@@ -68,15 +69,12 @@ $(function(){
           data: { 'answer' : input },
           success: function(json) {
             console.log(json);
-            ok_match_words = json.ok_match;
-            ok_not_match_words = json.ok_unmatch;
             match_list.each(function(){
-              if($.inArray($(this).html(), ok_match_words) !== -1) ok(this);
+              if($.inArray($(this).html(), json.ok_match) !== -1) ok(this);
             });
             not_match_list.each(function(){
-              if($.inArray($(this).html(), ok_not_match_words) !== -1) ok(this);
+              if($.inArray($(this).html(), json.ok_unmatch) !== -1) ok(this);
             });
-
             if(isAllOk()) allOkFunc();
             else          notAllOkFunc();
           },
