@@ -11,12 +11,14 @@
   <h1><a href="/" >Regex GAME</a></h1>
 </header>
 <div id="container">
-  <h2>Cource&nbsp;<%= @course_id %>&nbsp;RANKING</h2>
-  <form>
+  <h2>Congratulations!</h2>
+  <form action="/c/<%= @course_id %>/result/put" method="POST">
     <ol id="result_list">
       <li class="result_item">@satos</li>
       <li class="result_item">@satos</li>
-      <li class="result_item">@satos</li>
+      <li class="result_item" id="your_result">
+        <label for="name">input&nbsp;your&nbsp;name&nbsp;:&nbsp;</label><input id="name" type="text" name="name" size="40" />&nbsp;<input type="submit" value="OK" />
+      </li>
       <li class="result_item">@satos</li>
       <li class="result_item">@satos</li>
       <li class="result_item">@satos</li>

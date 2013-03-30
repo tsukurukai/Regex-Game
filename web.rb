@@ -35,17 +35,30 @@ post '/c/:course_id/q/:quiz_id/answer' do
   { success: true, ok_match: ok_match, ok_not_match: ok_not_match }.to_json
 end
 
-# result
-post '/c/:course_id/result' do
+# result 
+# post total time
+post '/c/:course_id/result/complete' do
   @course_id = params[:course_id]
-  erb :result
+  redirect "/c/#{@course_id}/result/input"
+end
+
+# result
+get '/c/:course_id/result/input' do
+  @course_id = params[:course_id]
+  erb :result_input
 end
 
 # result
 # put answerer's name
-post '/c/:course_id/result/put/:name' do
+post '/c/:course_id/result/put' do
   @course_id = params[:course_id]
   @name      = params[:name]
+  redirect "/c/#{@course_id}/result"
+end
+
+# result
+get '/c/:course_id/result' do
+  @course_id = params[:course_id]
   erb :result
 end
 
