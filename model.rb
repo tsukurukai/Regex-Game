@@ -3,13 +3,15 @@ require 'json'
 
 class BaseModel
     def initialize()
-        if development
+        if 'production' != ENV['RACK_ENV'] 
             connection = Mongo::Connection.new('localhost')
         else
             connection = Mongo::Connection.new('alex.mongohq.com', 10015)
         end
         @db = connection.db('app14201811')
-        @db.authenticate('regex', 'regex') if !development
+        if 'production' == ENV['RACK_ENV'] 
+            @db.authenticate('regex', 'regex')
+		end
     end
 end
 
