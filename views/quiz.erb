@@ -14,21 +14,15 @@
 </header>
 <div id="container">
   <article>
-    <h1>Q<%= @quiz_id %></h1>
+    <h1 id="qnumber">Q1</h1>
     <section class="question left">
       <h2>Match Words</h2>
       <ul id="match_list">
-      <% @matches.each do |q| %>
-        <li><%= q %></li>
-      <% end %>
       </ul>
     </section>
     <section class="question right">
       <h2>Don't Match Words</h2>
       <ul id="not_match_list">
-      <% @unmatches.each do |q| %>
-        <li><%= q %></li>
-      <% end %>
       </ul>
     </section>
     <section id="timer">00:00:00:000</section>

@@ -1,8 +1,9 @@
 (function(){
 $(function(){
-  var question = function(){
-    var match_list = $('#match_list li'),
-        not_match_list = $('#not_match_list li'),
+  var createQuestion = function(){
+    var match_list = $([]),
+        not_match_list = $([]),
+        qid = 1,
         ok = function(elm){
           $(elm).addClass('ok');
           $(elm).removeClass('ng');
@@ -12,6 +13,26 @@ $(function(){
           $(elm).addClass('ng');
         };
     return {
+      load: function(quizId){
+        $.getJSON(
+          location.href+'/q/'+quizId,
+          {},
+          function(json) {
+            console.log(json.matches);
+            console.log(json.unmatches);
+            $.each(json.matches, function(){
+              $('#match_list').append('<li>'+this+'</li>');
+            });
+            $.each(json.unmatches, function(){
+              $('#not_match_list').append('<li>'+this+'</li>');
+            });
+            match_list = $('#match_list');
+            not_match_list = $('#not_match_list');
+            $('#qnumber').html('Q'+quizId);
+            qid = quizId;
+          }
+        );
+      },
       clear: function(){
           match_list.each(function(){ ng(this) });
           not_match_list.each(function(){ ng(this) });
@@ -23,7 +44,7 @@ $(function(){
         $.ajax({
           scriptCharset: 'utf-8',
           type: "POST",
-          url: location.href+'/answer',
+          url: location.href+'/q/'+qid+'/answer',
           data: {
             'answer' : input,
           },
@@ -56,7 +77,10 @@ $(function(){
         return result;
       }
     };
-  }();
+  };
+
+  var question = createQuestion(1);
+  question.load(1);
 
   var timer = function(output, interval){
     var running = false,
@@ -94,6 +118,8 @@ $(function(){
     question.test($('#reg_input').val());
     if (question.isAllOk()) {
       alert('ALL OK!!');
+      alert('Go to Next Quiz');
+      question.load(2);
     } else {
       timer.start();
     }
