@@ -50,14 +50,30 @@ class RankingModel < BaseModel
 		coll.insert(h)
 	end
 
-	def getList(offset=0)
-
+	def getList(page=1, limit=5)
+        coll = @db.collection('ranking')
+        i=1;
+		list = Array.new
+        coll.find().sort(:time => :desc).each do |slice|
+		    if i > (page -1) * limit && i <= (page) * limit 
+		        list.push(slice)
+			end
+			i += 1
+        end
+		return list
 	end
 
 	def find(username)
-
+        coll = @db.collection('ranking')
+        i=1;
+        coll.find().sort(:time => :desc).each do |slice|
+		    if slice['name'] == username
+                return i;
+			end
+			i +=1
+        end
+        return nil
 	end
-
 
 end
 
