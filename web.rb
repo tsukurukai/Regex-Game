@@ -4,8 +4,11 @@ require 'erb'
 
 require 'sinatra/reloader' if development?
 
+require './model'
+
 # TOP
 get '/' do
+  @courses = RegexModel.new.getCourses()
   erb :index
 end
 

@@ -12,7 +12,11 @@
 </header>
 <div id="container">
   <h2>Welcome Regex GAME!</h2>
-  <a href="/c/1/q/1">START</a>
+  <ul>
+    <% @courses.each do |hash| %>
+      <li><a href="/c/<%= hash['id'] %>/q/1"><%= hash['name'] %></a></li>
+    <% end %>
+  </ul>
 </div>
 <footer></footer>
 </body>
