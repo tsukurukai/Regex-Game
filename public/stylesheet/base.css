@@ -85,18 +85,21 @@ section.answer {
 }
 
 #result_list {
-  margin-left: 300px;
+  margin-left: 220px;
   text-align: left;
 }
 
 #your_result {
+  background-color: #FFCC66;
+  font-size: 120%;
   margin-top: 3em;
   margin-bottom: 3em;
   margin-left: 0px;
+  padding: 5px;
 }
 
 li.result_item {
   margin-bottom: 2em;
-  margin-left: 50px;
+  margin-left: 80px;
 }
 
