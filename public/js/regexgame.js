@@ -127,8 +127,7 @@ $(function(){
         timer.start();
       },function(){
         alert('ALL Quiz is Complete!!');
-        $('#answer_form').append('<input type="hidden" name="time" value="'+timer.runningTime()+'" />');
-        $('#answer_form').submit();
+        location.href = location.href + '/result/input?time='+encodeURIComponent(timer.runningTime());
       });
     },
     function(){
