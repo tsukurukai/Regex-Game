@@ -100,7 +100,7 @@ def exec_regular_expression(answer, quiz)
   p '********* /match result **************'
 
   # unmatch させたいリスト
-  ok_unmatch = quiz["unmatches"].select {|item| regex_expression =~ item}
+  ok_unmatch = quiz["unmatches"].reject {|item| regex_expression =~ item}
   p '********* unmatch result **************'
   p regex_expression
   p quiz["unmatches"] 
