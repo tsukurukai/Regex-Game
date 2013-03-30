@@ -14,18 +14,17 @@ get '/' do
 end
 
 # quiz
-# render quiz 
+# render quiz
 get '/c/:course_id' do
   @course_id = params[:course_id]
   erb :quiz
 end
 
 # quiz
-# render quiz 
+# render quiz
 get '/c/:course_id/q/:quiz_id' do
   @course_id = params[:course_id]
   @quiz_id   = params[:quiz_id]
-  # quiz を取得
   h = RegexModel.new.getQuiz(@course_id.to_i, @quiz_id.to_i)
   count = h["count"]
   is_finish = @quiz_id.to_i > count.to_i
@@ -75,40 +74,43 @@ end
 ## ====================
 ## methods
 ## ====================
-# 入力された回答が正しいかチェックする
+# Check the answer and Create a OK list
+#  return (has)
+#   success    : (bool) true(the answer is correct) / false(wrong)
 def check_answer_and_get_result(answer, course_id, quiz_id)
-  # quiz を取得
-  quiz = RegexModel.new.getQuiz(course_id.to_i, quiz_id.to_i)
-  # quiz に対して正規表現を実行する
-  result = exec_regular_expression(answer, quiz["quiz"])
+  h = RegexModel.new.getQuiz(course_id.to_i, quiz_id.to_i)
+  quiz = h["quiz"]
+  ok_list = exec_regular_expression(answer, quiz)
+  # regard as "correct answer" under these conditions:
+  # - the count of ok_match count equql to the count of matches of quiz and
+  # - the count of ok_unmatch count equal to the count of unmatches of quiz
+  status = false
+  status = true if ok_list[:ok_matches].size == quiz["matches"].size && ok_list[:ok_unmatches].size == quiz["unmatches"].size
+  # return as hash
+  { success:status, ok_match:ok_list[:ok_matches], ok_unmatch:ok_list[:ok_unmatches] }
 end
 
-# 入力された回答が正しいかチェックする
+# execute the answer(regex) for quiz
+#  return (hash)
+#   ok_match   : (array) 'Match words' list matched to the answer
+#   ok_unmatch : (array) 'Don't Match words' list unmatched to the answer
 def exec_regular_expression(answer, quiz)
-  # 入力された値を正規表現に変換
-  regex_expression = convert_regex(answer)
-  # match させたいリスト
-  ok_match = quiz["matches"].select {|item| regex_expression =~ item}
-  # unmatch させたいリスト
-  ok_unmatch = quiz["unmatches"].reject {|item| regex_expression =~ item}
-
-  # regard as "correct answer" under these conditions: 
-  # - equal the count of ok_match count to the count of matches of quiz and
-  # - equal the count of ok_unmatch count to the count of unmatches of quiz
-  if ok_match.size == quiz["matches"].size && ok_unmatch.size == quiz["unmatches"].size
-    status = true
-  else 
-    status = false 
-  end
-  # contain in hash
-  { success:status, ok_match:ok_match, ok_unmatch:ok_unmatch }
+  regular_expression = string_to_regex(answer)
+  # execute the answer to 'Match words'
+  ok_matches = quiz["matches"].select {|str| regular_expression =~ str}
+  # execute the answer to 'Don't Match words'
+  ok_unmatches = quiz["unmatches"].reject {|str| regular_expression =~ str}
+  # return as hash
+  { ok_matches:ok_matches, ok_unmatches:ok_unmatches }
 end
 
 # convert answer from string to Regular Expression type
-def convert_regex(answer)
-    regex_string = '^'
-    regex_string << answer.gsub('¥', '\\')
-    regex_string << '$'
-    Regexp.new(regex_string)
-end 
+def string_to_regex(answer)
+  regex_string = '^'
+  # '¥' is required to be replaced to '\'
+  # due to '¥' does differ from '\' especially in mac
+  regex_string << answer.gsub('¥', '\\')
+  regex_string << '$'
+  Regexp.new(regex_string)
+end
 
