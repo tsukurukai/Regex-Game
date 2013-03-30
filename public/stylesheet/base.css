@@ -79,6 +79,10 @@ section.answer {
   clear: both;
 }
 
+section.answer span.regex{
+  font-size: 270%;
+}
+
 #reg_input {
   font-size: 250%;
   width: 600px;
