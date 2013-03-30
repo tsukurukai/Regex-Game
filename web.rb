@@ -68,14 +68,6 @@ end
 
 ## methods
 
-# quizを取得します
-def get_quiz(course_id, quiz_id)
-  # mongodb からクイズを取得
-  # quiz = get_quiz_from_db(courser_id, quiz_id)
-  quiz = { course_id:1, quiz_id:2, match:%w[apple banana], unmatch:%w[HTML5 Android]}
-  quiz
-end
-
 # 入力された回答が正しいかチェックする
 def check_answer_and_get_result(answer, course_id, quiz_id)
   # quiz を取得
