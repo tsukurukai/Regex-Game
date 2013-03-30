@@ -1,18 +1,19 @@
 require 'mongo'
 require 'json'
 
-
-class RegexModel
+class BaseModel
     def initialize()
         connection = Mongo::Connection.new('localhost');
         @db = connection.db('regex')
 	end
+end
 
+class RegexModel < BaseModel
     def getCourses()
         coll = @db.collection('study')
         baka = coll.find_one 
 		res = Array.new
-        baka['courses'].each{ | co |
+        baka['courses'].each{|co|
 		    h = Hash.new
 		    h['name'] = co['name']
 		    h['id'] = co['id']
@@ -26,7 +27,6 @@ class RegexModel
         baka = coll.find_one 
 		quizes = Array.new
         baka['courses'].each{ | co |
-			
 		    if ( co['id'] == course_id)
 			    quizes = co['quizes'] 
 				break;
@@ -41,6 +41,24 @@ class RegexModel
 end
 
 
+class RankingModel < BaseModel
+    def insert(name, time)
+        coll = @db.collection('ranking')
+		h = Hash.new
+		h['name'] = name
+		h['time'] = time.to_i
+		coll.insert(h)
+	end
 
+	def getList(offset=0)
+
+	end
+
+	def find(username)
+
+	end
+
+
+end
 
  
