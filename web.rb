@@ -76,28 +76,29 @@ end
 # 入力された回答が正しいかチェックする
 def check_answer_and_get_result(answer, course_id, quiz_id)
   # quiz を取得
-  quiz = get_quiz(course_id, quiz_id)
+  quiz = RegexModel.new.getQuiz(course_id.to_i, quiz_id.to_i)
   # quiz に対して正規表現を実行する
-  result = exec_regular_expression(answer, quiz)
+  result = exec_regular_expression(answer, quiz["quiz"])
 end
 
 # 入力された回答が正しいかチェックする
 def exec_regular_expression(answer, quiz)
+  p quiz
   # 入力された値を正規表現に変換
   regex_expression = convert_regex(answer)
   # match させたいリスト
-  ok_match = quiz[:match].select {|item| regex_expression =~ item}
+  ok_match = quiz["matches"].select {|item| regex_expression =~ item}
   p '********* match result **************'
   p regex_expression
-  p quiz[:match] 
+  p quiz["matches"] 
   p ok_match
   p '********* /match result **************'
 
   # unmatch させたいリスト
-  ok_unmatch = quiz[:unmatch].select {|item| regex_expression =~ item}
+  ok_unmatch = quiz["unmatches"].select {|item| regex_expression =~ item}
   p '********* unmatch result **************'
   p regex_expression
-  p quiz[:unmatch] 
+  p quiz["unmatches"] 
   p ok_unmatch
   p '********* /unmatch result **************'
 
