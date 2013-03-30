@@ -1,1 +1,0 @@
-{"courses":[{"name":"test_course1","quizes":[{"matches":["Banana","Apple"],"unmatches":["HTML5","hash_tag"]},{"matches":["Banana","Apple"],"unmatches":["HTML5","hash_tag"]}]},{"name":"test_course2","quizes":[{"matches":["Banana","Apple"],"unmatches":["HTML5","hash_tag"]},{"matches":["satot@hoge.com","Apple"],"unmatches":["HTML5","hash_tag"]}]}]}
