@@ -1,5 +1,5 @@
 courses:
-  - name: test_course1
+  - name: course1
     id: 1
     quizes:
       -
@@ -16,7 +16,7 @@ courses:
         unmatches:
           - Whale 
           - Shark  
-  - name: test_course2
+  - name: course2
     id: 2
     quizes:
       -
@@ -29,8 +29,8 @@ courses:
           - hash_tag
       -
         matches:
-          - satot@hoge.com
-          - kariyay@hoge.com 
+          - john@hoge.com
+          - brown@hoge.com 
         unmatches:
-          - tomidokoror@hoge.com 
+          - matz 
           - hash_tag
