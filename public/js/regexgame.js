@@ -12,36 +12,52 @@ $(function(){
           $(elm).removeClass('ok');
           $(elm).addClass('ng');
         },
-        load = function(quizId){
-          $.getJSON(
-            location.href+'/q/'+quizId,
-            {},
-            function(json) {
-              console.log(json.matches);
-              console.log(json.unmatches);
-              $.each(json.matches, function(){
-                $('#match_list').append('<li>'+this+'</li>');
-              });
-              $.each(json.unmatches, function(){
-                $('#not_match_list').append('<li>'+this+'</li>');
-              });
-              match_list = $('#match_list');
-              not_match_list = $('#not_match_list');
-              qid = quizId;
-              $('#qnumber').html('Q'+quizId);
+        isAllOk = function(){
+          var result = true;
+          match_list.each(function(){
+            if($(this).attr('class').split(' ').indexOf('ok') === -1) {
+              result = false;
             }
-          );
+          });
+          return result;
+        },
+        load = function(quizId, loadFunc, finishFunc){
+          $.ajax({
+            scriptCharset: 'utf-8',
+            type: "GET",
+            url: location.href+'/q/'+quizId,
+            data: {},
+            success: function(json) {
+              console.log(json);
+              if (json.isFinish) {
+                finishFunc();
+              } else {
+                $('#match_list').empty();
+                $('#not_match_list').empty();
+                $.each(json.quiz.matches, function(){ $('#match_list').append('<li>'+this+'</li>') });
+                $.each(json.quiz.unmatches, function(){ $('#not_match_list').append('<li>'+this+'</li>') });
+                match_list = $('#match_list li');
+                not_match_list = $('#not_match_list li');
+                qid = quizId;
+                $('#qnumber').html('Q'+quizId);
+                if (loadFunc) loadFunc();
+              }
+            },
+            error: function(request, status, e){ alert("Internal Serve Error.") },
+            dataType: 'json'
+          });
         };
     load(1);
     return {
-      next: function() {
-        this.load(qid+1);
+      next: function(loadFunc, finishFunc) {
+        this.clear();
+        load(qid+1, loadFunc, finishFunc);
       },
       clear: function(){
           match_list.each(function(){ ng(this) });
           not_match_list.each(function(){ ng(this) });
       },
-      test: function(input){
+      test: function(input, allOkFunc, notAllOkFunc){
         var ok_match_words = [],
             ok_not_match_words = [];
         this.clear();
@@ -49,40 +65,28 @@ $(function(){
           scriptCharset: 'utf-8',
           type: "POST",
           url: location.href+'/q/'+qid+'/answer',
-          data: {
-            'answer' : input,
-          },
+          data: { 'answer' : input },
           success: function(json) {
-            console.log(json);
-            if (json.success) {
+            if (!json.success) {
               ok_match_words = json.ok_match;
-              ok_not_match_words = json.ok_not_match;
+              ok_not_match_words = json.ok_unmatch;
             }
             match_list.each(function(){
-              if(ok_match_words.indexOf($(this).html()) !== -1) ok(this);
+              if($.inArray($(this).html(), ok_match_words) !== -1) ok(this);
             });
             not_match_list.each(function(){
-              if(ok_not_match_words.indexOf($(this).html()) !== -1) ok(this);
+              if($.inArray($(this).html(), ok_not_match_words) !== -1) ok(this);
             });
+
+            if(isAllOk()) allOkFunc();
+            else          notAllOkFunc();
           },
-          error: function(request, status, e) {
-            alert("Internal Serve Error.");
-          },
+          error: function(request, status, e) { alert("Internal Serve Error.") },
           dataType: 'json'
         });
-      },
-      isAllOk: function(){
-        var result = true;
-        match_list.each(function(){
-          if($(this).attr('class').split(' ').indexOf('ok') === -1){
-            result = false;
-          }
-        });
-        return result;
       }
     };
   };
-
   var question = createQuestion();
 
   var timer = function(output, interval){
@@ -105,7 +109,8 @@ $(function(){
       reset: function(){
         this.stop();
         beginTime = null;
-      }
+      },
+      runningTime: function(){ return runningTime; }
     };
   }($('#timer'), 10);
 
@@ -118,14 +123,20 @@ $(function(){
 
   $('#reg_submit').click(function(){
     timer.stop();
-    question.test($('#reg_input').val());
-    if (question.isAllOk()) {
+    question.test($('#reg_input').val(), function(){
       alert('ALL OK!!');
-      alert('Go to Next Quiz');
-      question.next();
-    } else {
+      question.next(function(){
+        alert("Let's Next Quiz");
+        timer.start();
+      },function(){
+        alert('ALL Quiz is Complete!!');
+        $('#answer_form').append('<input type="hidden" name="time" value="'+timer.runningTime()+'" />');
+        $('#answer_form').submit();
+      });
+    },
+    function(){
       timer.start();
-    }
+    });
   });
 
   question.clear();

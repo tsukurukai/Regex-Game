@@ -27,7 +27,7 @@
     </section>
     <section id="timer">00:00:00:000</section>
     <section class="answer">
-      <form id="answer_form" >
+      <form id="answer_form" action="/c/<%= @course_id %>/result/complete">
         <p><input type="text" id="reg_input" name="answer"/></p>
         <p><input type="button" value="OK" id="reg_submit" /></p>
       </form>

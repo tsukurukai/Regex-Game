@@ -27,7 +27,8 @@ get '/c/:course_id/q/:quiz_id' do
   # quiz を取得
   h = RegexModel.new.getQuiz(@course_id.to_i, @quiz_id.to_i)
   count = h["count"]
-  h["quiz"].to_json
+  is_finish = @quiz_id.to_i > count.to_i
+  {isFinish: is_finish, quiz: h["quiz"]}.to_json
 end
 
 # quiz
