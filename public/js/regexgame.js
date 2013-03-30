@@ -11,27 +11,31 @@ $(function(){
         ng = function(elm){
           $(elm).removeClass('ok');
           $(elm).addClass('ng');
+        },
+        load = function(quizId){
+          $.getJSON(
+            location.href+'/q/'+quizId,
+            {},
+            function(json) {
+              console.log(json.matches);
+              console.log(json.unmatches);
+              $.each(json.matches, function(){
+                $('#match_list').append('<li>'+this+'</li>');
+              });
+              $.each(json.unmatches, function(){
+                $('#not_match_list').append('<li>'+this+'</li>');
+              });
+              match_list = $('#match_list');
+              not_match_list = $('#not_match_list');
+              qid = quizId;
+              $('#qnumber').html('Q'+quizId);
+            }
+          );
         };
+    load(1);
     return {
-      load: function(quizId){
-        $.getJSON(
-          location.href+'/q/'+quizId,
-          {},
-          function(json) {
-            console.log(json.matches);
-            console.log(json.unmatches);
-            $.each(json.matches, function(){
-              $('#match_list').append('<li>'+this+'</li>');
-            });
-            $.each(json.unmatches, function(){
-              $('#not_match_list').append('<li>'+this+'</li>');
-            });
-            match_list = $('#match_list');
-            not_match_list = $('#not_match_list');
-            $('#qnumber').html('Q'+quizId);
-            qid = quizId;
-          }
-        );
+      next: function() {
+        this.load(qid+1);
       },
       clear: function(){
           match_list.each(function(){ ng(this) });
@@ -79,8 +83,7 @@ $(function(){
     };
   };
 
-  var question = createQuestion(1);
-  question.load(1);
+  var question = createQuestion();
 
   var timer = function(output, interval){
     var running = false,
@@ -119,7 +122,7 @@ $(function(){
     if (question.isAllOk()) {
       alert('ALL OK!!');
       alert('Go to Next Quiz');
-      question.load(2);
+      question.next();
     } else {
       timer.start();
     }
