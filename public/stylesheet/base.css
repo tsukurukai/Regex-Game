@@ -19,6 +19,11 @@ header p {
   float: left;
 }
 
+#container {
+  clear: both;
+  text-align: center;
+}
+
 article {
   clear: both;
   text-align: center;
@@ -26,6 +31,10 @@ article {
 
 article h1 {
   border-bottom: solid 1px gray;
+}
+
+#quiz_list {
+  font-size: 200%;
 }
 
 section.question {
