@@ -18,7 +18,10 @@ get '/c/:course_id/q/:quiz_id' do
   @course_id = params[:course_id]
   @quiz_id   = params[:quiz_id]
   # quiz を取得
-  @quiz = get_quiz(@course_id, @quiz_id).to_json
+  h = RegexModel.new.getQuiz(@course_id.to_i, @quiz_id.to_i)
+  count = h["count"]
+  @matches = h["quiz"]["matches"]
+  @unmatches = h["quiz"]["unmatches"]
   erb :quiz
 end
 

@@ -18,23 +18,17 @@
     <section class="question left">
       <h2>Match Words</h2>
       <ul id="match_list">
-        <li>Banana</li>
-        <li>Apple</li>
-        <li>Book</li>
-        <li>cycle</li>
-        <li>Display</li>
-        <li>CD</li>
-        <li>keybord</li>
-        <li>phone</li>
+      <% @matches.each do |q| %>
+        <li><%= q %></li>
+      <% end %>
       </ul>
     </section>
     <section class="question right">
       <h2>Don't Match Words</h2>
       <ul id="not_match_list">
-        <li>database schema</li>
-        <li>non-union</li>
-        <li>HTML5</li>
-        <li>Mr.Tanaka</li>
+      <% @unmatches.each do |q| %>
+        <li><%= q %></li>
+      <% end %>
       </ul>
     </section>
     <section id="timer">00:00:00:000</section>
