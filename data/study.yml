@@ -1,5 +1,6 @@
 courses:
   - name: test_course1
+    id: 1
     quizes:
       -
         matches:
@@ -16,6 +17,7 @@ courses:
           - HTML5
           - hash_tag
   - name: test_course2
+    id: 2
     quizes:
       -
         matches:
