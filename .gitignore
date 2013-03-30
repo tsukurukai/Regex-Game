@@ -4,3 +4,4 @@ data/db/mongod.lock
 data/db/journal*
 data/db/regex.*
 data/db/local.*
+data/db/*

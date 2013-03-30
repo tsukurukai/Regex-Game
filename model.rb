@@ -4,7 +4,7 @@ require 'json'
 class BaseModel
     def initialize()
         connection = Mongo::Connection.new('localhost');
-        @db = connection.db('regex')
+        @db = connection.db('app14201811')
     end
 end
 
