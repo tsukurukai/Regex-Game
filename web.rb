@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'sinatra'
 require 'json'
 require 'erb'
@@ -118,7 +119,7 @@ end
 # 文字列を正規表現の形式に変換します
 def convert_regex(answer)
     regex_string = '^'
-    regex_string << answer
+    regex_string << answer.gsub('¥', '\\')
     regex_string << '$'
     Regexp.new(regex_string)
 end 
