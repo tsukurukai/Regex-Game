@@ -9,9 +9,12 @@ body {
 }
 
 header h1 {
-  color: #CD5C5C;
-  font-size: 150%;
   width: 880px;
+}
+
+header h1 a {
+  color: #CD5C5C;
+  text-decoration: none;
 }
 
 header h1,
@@ -55,7 +58,7 @@ ul {
   padding: 0;
 }
 
-li {
+ul li {
   list-style-type: none;
 }
 
@@ -80,3 +83,20 @@ section.answer {
   font-size: 250%;
   width: 600px;
 }
+
+#result_list {
+  margin-left: 300px;
+  text-align: left;
+}
+
+#your_result {
+  margin-top: 3em;
+  margin-bottom: 3em;
+  margin-left: 0px;
+}
+
+li.result_item {
+  margin-bottom: 2em;
+  margin-left: 50px;
+}
+
