@@ -108,3 +108,9 @@ li.result_item {
   font-style: bold;
   font-size: 120%;
 }
+
+footer {
+  margin-top: 15em;
+  text-align: center;
+}
+
