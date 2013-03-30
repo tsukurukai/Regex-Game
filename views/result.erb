@@ -15,7 +15,7 @@
   <form>
     <ol id="result_list">
     <% @ranking_list.each do |result| %>
-      <li class="result_item"><%= result["name"] %>&nbsp;:&nbsp;<%= result["time"] %>[s]</li>
+      <li class="result_item"><%= result[:name] %>&nbsp;:&nbsp;<%= result[:time] %>[s]</li>
     <% end %>
   </ol>
   </form>
