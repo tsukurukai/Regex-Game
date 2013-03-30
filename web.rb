@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'sinatra'
 require 'json'
 require 'erb'
@@ -44,13 +45,6 @@ post '/c/:course_id/q/:quiz_id/answer' do
   check_answer_and_get_result(@answer, @course_id, @quiz_id).to_json
 end
 
-# result 
-# post total time
-post '/c/:course_id/result/complete' do
-  @course_id = params[:course_id]
-  redirect "/c/#{@course_id}/result/input"
-end
-
 # result
 get '/c/:course_id/result/input' do
   @course_id = params[:course_id]
@@ -58,7 +52,7 @@ get '/c/:course_id/result/input' do
 end
 
 # result
-# put answerer's name
+# register answerer's name
 post '/c/:course_id/result/put' do
   @course_id = params[:course_id]
   @name      = params[:name]
@@ -89,7 +83,6 @@ end
 
 # 入力された回答が正しいかチェックする
 def exec_regular_expression(answer, quiz)
-  p quiz
   # 入力された値を正規表現に変換
   regex_expression = convert_regex(answer)
   # match させたいリスト
@@ -110,12 +103,15 @@ def exec_regular_expression(answer, quiz)
 
   # 以下の条件を満たす時、「正解」扱い
   # matchでヒットした数と問題の数がイコール かつ
-  # unmatchでヒットした数が0
-  if ok_match.size == quiz[:match] && ok_unmatch.size == 0
+  # unmatchでヒットした数と問題の数がイコール
+  if ok_match.size == quiz["matches"].size && ok_unmatch.size == quiz["unmatches"].size
     status = true
   else 
     status = false 
   end
+  p '********* status result **************'
+  p status 
+  p '********* /statu result **************'
 
   # ハッシュに格納
   { success:status, ok_match:ok_match, ok_unmatch:ok_unmatch }
@@ -124,7 +120,7 @@ end
 # 文字列を正規表現の形式に変換します
 def convert_regex(answer)
     regex_string = '^'
-    regex_string << answer
+    regex_string << answer.gsub('¥', '\\')
     regex_string << '$'
     Regexp.new(regex_string)
 end 
