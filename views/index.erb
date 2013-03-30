@@ -14,7 +14,7 @@
   <h2>Welcome Regex GAME!</h2>
   <ul>
     <% @courses.each do |hash| %>
-      <li><a href="/c/<%= hash['id'] %>/q/1"><%= hash['name'] %></a></li>
+      <li><a href="/c/<%= hash['id'] %>"><%= hash['name'] %></a></li>
     <% end %>
   </ul>
 </div>
