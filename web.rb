@@ -59,7 +59,7 @@ post '/c/:course_id/result/put' do
   @name      = params[:name]
   @time      = params[:time]
   # register answerer's name and record-time
-  RankingModel.new.insert(@name.to_s, @time.to_i)
+  Ranking.new(@name.to_s, @time.to_i).save!
   redirect "/c/#{@course_id}/result"
 end
 
@@ -67,8 +67,8 @@ end
 get '/c/:course_id/result' do
   @course_id = params[:course_id]
   # get all ranking-list from db
-  tmp_ranking_list = RankingModel.new.getList(1, 30)
-  @ranking_list = tmp_ranking_list.map {|item| {name:item["name"], time:item["time"].to_f/1000}}
+  list = Ranking.getList(1, 30)
+  @ranking_list = list.map {|item| {name:item.name, time:item.time.to_f/1000}}
   erb :result
 end
 

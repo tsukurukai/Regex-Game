@@ -2,18 +2,6 @@ require 'mongo'
 require 'json'
 
 class BaseModel
-  def initialize()
-    if 'production' != ENV['RACK_ENV']
-      connection = Mongo::Connection.new('localhost')
-    else
-      connection = Mongo::Connection.new('alex.mongohq.com', 10015)
-    end
-    @db = connection.db('app14201811')
-    if 'production' == ENV['RACK_ENV']
-      @db.authenticate('regex', 'regex')
-    end
-  end
-
 private
 
   def self.db()
@@ -22,11 +10,11 @@ private
     else
       connection = Mongo::Connection.new('alex.mongohq.com', 10015)
     end
-    @db = connection.db('app14201811')
+    db = connection.db('app14201811')
     if 'production' == ENV['RACK_ENV']
-      @db.authenticate('regex', 'regex')
+      db.authenticate('regex', 'regex')
     end
-    @db
+    db
   end
 end
 
@@ -82,40 +70,42 @@ private
 end
 
 
-class RankingModel < BaseModel
-  def initialize()
-    super()
-    @coll = @db.collection('ranking')
+class Ranking < BaseModel
+  attr_reader :name, :time
+  def initialize(name, time)
+    @name = name
+    @time = time
   end
 
-  def insert(name, time)
-    h = Hash.new
-    h['name'] = name
-    h['time'] = time.to_i
-    @coll.insert(h)
-  end
-
-  def getList(page=1, limit=5)
+  def self.getList(page=1, limit=5)
     i=1;
     list = Array.new
-    @coll.find().sort(:time).each do |slice|
+    db.collection('ranking').find().sort(:time).each do |slice|
       if i > (page -1) * limit && i <= (page) * limit
-        list.push(slice)
+        list.push(Ranking.new(slice['name'], slice['time']))
       end
       i += 1
     end
     return list
   end
 
-  def find(username)
-    i=1;
-    @coll.find().sort(:time).each do |slice|
-      if slice['name'] == username
-        return i;
-      end
-      i +=1
-    end
-    return nil
+# 使われてない？
+#  def find(username)
+#    i=1;
+#    @coll.find().sort(:time).each do |slice|
+#      if slice['name'] == username
+#        return i;
+#      end
+#      i +=1
+#    end
+#    return nil
+#  end
+
+  def save!
+    h = Hash.new
+    h['name'] = @name
+    h['time'] = @time
+    Ranking.db.collection('ranking').insert(h)
   end
 end
 
