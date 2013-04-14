@@ -9,7 +9,7 @@ require './model'
 
 # TOP
 get '/' do
-  @courses = RegexModel.new.getCourses()
+  @courses = Cource.all
   erb :index
 end
 
@@ -25,10 +25,11 @@ end
 get '/c/:course_id/q/:quiz_id' do
   @course_id = params[:course_id]
   @quiz_id   = params[:quiz_id]
-  h = RegexModel.new.getQuiz(@course_id.to_i, @quiz_id.to_i)
-  count = h["count"]
+  cource = Cource.find_by_id(@course_id.to_i)
+  quiz = cource.quiz(@quiz_id.to_i)
+  count = cource.quiz_length
   is_finish = @quiz_id.to_i > count.to_i
-  {isFinish: is_finish, quiz: h["quiz"]}.to_json
+  {isFinish: is_finish, quiz: quiz}.to_json
 end
 
 # quiz
@@ -78,8 +79,7 @@ end
 #  return (has)
 #   success    : (bool) true(the answer is correct) / false(wrong)
 def check_answer_and_get_result(answer, course_id, quiz_id)
-  h = RegexModel.new.getQuiz(course_id.to_i, quiz_id.to_i)
-  quiz = h["quiz"]
+  quiz = Cource.find_by_id(course_id.to_i).quiz(quiz_id.to_i)
   ok_list = exec_regular_expression(answer, quiz)
   # regard as "correct answer" under these conditions:
   # - the count of ok_match count equql to the count of matches of quiz and

@@ -3,48 +3,80 @@ require 'json'
 
 class BaseModel
   def initialize()
-    if 'production' != ENV['RACK_ENV'] 
+    if 'production' != ENV['RACK_ENV']
       connection = Mongo::Connection.new('localhost')
     else
       connection = Mongo::Connection.new('alex.mongohq.com', 10015)
     end
     @db = connection.db('app14201811')
-    if 'production' == ENV['RACK_ENV'] 
+    if 'production' == ENV['RACK_ENV']
       @db.authenticate('regex', 'regex')
     end
   end
+
+private
+
+  def self.db()
+    if 'production' != ENV['RACK_ENV']
+      connection = Mongo::Connection.new('localhost')
+    else
+      connection = Mongo::Connection.new('alex.mongohq.com', 10015)
+    end
+    @db = connection.db('app14201811')
+    if 'production' == ENV['RACK_ENV']
+      @db.authenticate('regex', 'regex')
+    end
+    @db
+  end
 end
 
-class RegexModel < BaseModel
+class Cource < BaseModel
 
-  def initialize()
-    super()
-    @coll = @db.collection('study')
+  attr_reader :id, :name
+
+  def initialize(id, name)
+    @id = id
+    @name = name
   end
 
-  def getCourses()
+  def self.all
     res = Array.new
-    @coll.find_one['courses'].each{|co|
-      h = Hash.new
-      h['name'] = co['name']
-      h['id'] = co['id']
-      res.push(h)
+    db.collection('study').find_one['courses'].each{|co|
+      res.push(Cource.new(co['id'], co['name']))
     }
     return res
   end
 
-  def getQuiz(course_id, quiz_id)
-    quizes = Array.new
-    @coll.find_one['courses'].each{ | co |
-      if ( co['id'] == course_id)
-        quizes = co['quizes']
+  def self.find_by_id(cource_id)
+    res = nil
+    db.collection('study').find_one['courses'].each{|co|
+      if ( co['id'] == cource_id)
+        res = Cource.new(co['id'], co['name'])
         break;
       end
     }
-    h = Hash.new
-    h['count'] = quizes.length
-    h['quiz'] = quizes[quiz_id.to_i == 0 || quiz_id.to_i > quizes.length ? 0 : quiz_id.to_i - 1]
-    return h
+    return res
+  end
+
+  def quiz_length
+    @quizes ||= get_quiz
+    @quizes.length
+  end
+
+  def quiz(quiz_id)
+    @quizes ||= get_quiz
+    @quizes[quiz_id.to_i == 0 || quiz_id.to_i > @quizes.length ? 0 : quiz_id.to_i - 1]
+  end
+
+private
+
+  def get_quiz
+    quizes = Array.new
+    Cource.db.collection('study').find_one['courses'].each{ | co |
+      if ( co['id'] == @id)
+        return co['quizes']
+      end
+    }
   end
 
 end
@@ -67,7 +99,7 @@ class RankingModel < BaseModel
     i=1;
     list = Array.new
     @coll.find().sort(:time).each do |slice|
-      if i > (page -1) * limit && i <= (page) * limit 
+      if i > (page -1) * limit && i <= (page) * limit
         list.push(slice)
       end
       i += 1

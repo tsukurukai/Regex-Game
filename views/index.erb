@@ -13,8 +13,8 @@
 <div id="container">
   <h2>Welcome to Regex GAME!!!</h2>
   <ul>
-    <% @courses.each do |hash| %>
-      <li><a href="/c/<%= hash['id'] %>"><%= hash['name'] %></a></li>
+    <% @courses.each do |co| %>
+      <li><a href="/c/<%= co.id %>"><%= co.name %></a></li>
     <% end %>
   </ul>
 </div>
