@@ -18,7 +18,7 @@ private
   end
 end
 
-class Cource < BaseModel
+class Course < BaseModel
 
   attr_reader :id, :name
 
@@ -30,16 +30,16 @@ class Cource < BaseModel
   def self.all
     res = Array.new
     db.collection('study').find_one['courses'].each{|co|
-      res.push(Cource.new(co['id'], co['name']))
+      res.push(Course.new(co['id'], co['name']))
     }
     return res
   end
 
-  def self.find_by_id(cource_id)
+  def self.find_by_id(course_id)
     res = nil
     db.collection('study').find_one['courses'].each{|co|
-      if ( co['id'] == cource_id)
-        res = Cource.new(co['id'], co['name'])
+      if ( co['id'] == course_id)
+        res = Course.new(co['id'], co['name'])
         break;
       end
     }
@@ -60,7 +60,7 @@ private
 
   def get_quiz
     quizes = Array.new
-    Cource.db.collection('study').find_one['courses'].each{ | co |
+    Course.db.collection('study').find_one['courses'].each{ | co |
       if ( co['id'] == @id)
         return co['quizes']
       end
