@@ -22,9 +22,10 @@ end
 class Course < BaseModel
   attr_reader :id, :name
 
-  def initialize(id, name)
+  def initialize(id, name, quizes=nil)
     @id = id
     @name = name
+    @quizes = quizes
   end
 
   def self.all
