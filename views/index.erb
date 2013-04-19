@@ -1,21 +1,6 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<title>Regex GAME</title>
-<link rel="stylesheet" type="text/css" href="/stylesheet/import.css">
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-</head>
-<body>
-<%= erb :_header %>
-<div id="container">
-  <h2>Welcome to Regex GAME!!!</h2>
-  <ul>
-    <% @courses.each do |co| %>
-      <li><a href="/c/<%= co.id %>"><%= co.name %></a></li>
-    <% end %>
-  </ul>
-</div>
-<%= erb :_footer %>
-</body>
-</html>
+<h2>Welcome to Regex GAME!!!</h2>
+<ul>
+  <% @courses.each do |co| %>
+    <li><a href="/c/<%= co.id %>"><%= co.name %></a></li>
+  <% end %>
+</ul>

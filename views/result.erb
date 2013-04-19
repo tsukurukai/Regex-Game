@@ -1,26 +1,9 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<title>Regex GAME</title>
-<link rel="stylesheet" type="text/css" href="/stylesheet/import.css">
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-</head>
-<body>
-<header>
-  <h1><a href="/" >Regex GAME</a></h1>
-</header>
-<div id="container">
-  <h2>Course&nbsp;<%= @course_id %>&nbsp;RANKING</h2>
-  <form>
-    <ol id="result_list">
-    <% @ranking_list.each do |result| %>
-      <li class="result_item"><%= result[:name] %>&nbsp;:&nbsp;<%= result[:time] %>[s]</li>
-    <% end %>
-  </ol>
-  </form>
-  <p><a href="/">return&nbsp;to&nbsp;TOP&nbsp;page</a></p>
-</div>
-<footer>copyright(c) All rights reserved Tsukurukai.</footer>
-</body>
-</html>
+<h2>Course&nbsp;<%= @course_id %>&nbsp;RANKING</h2>
+<form>
+  <ol id="result_list">
+  <% @ranking_list.each do |result| %>
+    <li class="result_item"><span><%= result[:name] %></span>&nbsp;:&nbsp;<span><%= result[:time] %> s </span></li>
+  <% end %>
+</ol>
+</form>
+<p><a href="/">return&nbsp;to&nbsp;TOP&nbsp;page</a></p>
