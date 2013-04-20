@@ -140,7 +140,7 @@ class Ranking < BaseModel
 #    return nil
 #  end
 
-  def save!
+  def save
     h = Hash.new
     h['name'] = @name
     h['time'] = @time

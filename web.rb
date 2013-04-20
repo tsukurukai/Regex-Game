@@ -60,7 +60,7 @@ post '/c/:course_id/result/put' do
   @name      = params[:name]
   @time      = params[:time]
   # register answerer's name and record-time
-  Ranking.new(@name.to_s, @time.to_i).save!
+  Ranking.new(@name.to_s, @time.to_i).save
   redirect "/c/#{@course_id}/result"
 end
 
