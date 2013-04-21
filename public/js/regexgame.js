@@ -86,30 +86,7 @@ $(function(){
   };
   var question = createQuestion();
 
-  var timer = function(output, interval){
-    var running = false,
-        beginTime = null,
-        runningTime = 0,
-        countup = function() {
-          if (!running) return;
-          runningTime = runningTime + interval;
-          var h = String(Math.floor(runningTime / 3600000) + 100).substring(1);
-          var m = String(Math.floor((runningTime - h * 3600000)/60000) + 100).substring(1);
-          var s = String(Math.floor((runningTime - h * 3600000 - m * 60000)/1000) + 100).substring(1);
-          var ms = String((runningTime - h * 3600000 - m * 60000 - s * 1000) + 1000).substring(1,3);
-          output.html(h+':'+m+':'+s+':'+ms);
-        };
-    setInterval(countup, interval);
-    return {
-      start: function(){ running = true },
-      stop: function(){ running = false },
-      reset: function(){
-        this.stop();
-        beginTime = null;
-      },
-      runningTime: function(){ return runningTime; }
-    };
-  }($('#timer'), 10);
+  var timer = createTimer($('#timer'), 10);
 
   $(window).keypress(function(ev){
     if((ev.which && ev.which === 13) || (ev.keyCode && ev.keyCode === 13)) {
