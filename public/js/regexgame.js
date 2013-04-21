@@ -21,7 +21,8 @@ $(function(){
           });
           return result;
         },
-        load = function(quizId, loadFunc, finishFunc){
+        load = function(quizId){
+          var defer = $.Deferred();
           $.ajax({
             scriptCharset: 'utf-8',
             type: "GET",
@@ -29,36 +30,34 @@ $(function(){
             dataType: 'json',
             data: {}
           }).done(function(json) {
-              console.log(json);
-              if (json.isFinish) {
-                finishFunc();
-              } else {
-                $('#match_list').empty();
-                $('#not_match_list').empty();
-                $('#reg_input').val('');
-                $.each(json.quiz.matches, function(){ $('#match_list').append('<li>'+this+'</li>') });
-                $.each(json.quiz.unmatches, function(){ $('#not_match_list').append('<li>'+this+'</li>') });
-                match_list = $('#match_list li');
-                not_match_list = $('#not_match_list li');
-                qid = quizId;
-                $('#qnumber').html('Q'+quizId);
-                if (loadFunc) loadFunc();
-              }
+            if (!json.isFinish) {
+              $('#match_list').empty();
+              $('#not_match_list').empty();
+              $('#reg_input').val('');
+              $.each(json.quiz.matches, function(){ $('#match_list').append('<li>'+this+'</li>') });
+              $.each(json.quiz.unmatches, function(){ $('#not_match_list').append('<li>'+this+'</li>') });
+              match_list = $('#match_list li');
+              not_match_list = $('#not_match_list li');
+              qid = quizId;
+              $('#qnumber').html('Q'+quizId);
+            }
+            defer.resolve(json.isFinish);
           }).fail(function(data){
             alert("Internal Serve Error.")
           });
+          return defer.promise();
         };
     load(1);
     return {
       next: function(loadFunc, finishFunc) {
         this.clear();
-        load(qid+1, loadFunc, finishFunc);
+        return load(qid+1);
       },
       clear: function(){
         match_list.each(function(){ ng(this) });
         not_match_list.each(function(){ ng(this) });
       },
-      test: function(input, allOkFunc, notAllOkFunc){
+      test: function(input){
         var ok_match_words = [],
             ok_not_match_words = [],
             defer = $.Deferred();
@@ -70,16 +69,11 @@ $(function(){
           dataType: 'json',
           data: { 'answer' : input }
         }).done(function(json){
-          console.log(json);
-          match_list.filter(function(){
-            return $.inArray($(this).html(), json.ok_match) !== -1
-          }).each(function(){
-            ok(this)
+          match_list.each(function(){
+            if( $.inArray($(this).html(), json.ok_match) !== -1 ) ok(this)
           });
-          not_match_list.filter(function(){
-            return $.inArray($(this).html(), json.ok_unmatch) !== -1
-          }).each(function(){
-            ok(this)
+          not_match_list.each(function(){
+            if( $.inArray($(this).html(), json.ok_unmatch) !== -1 ) ok(this)
           });
           if(isAllOk()) defer.resolve();
           else          defer.reject();
@@ -103,23 +97,25 @@ $(function(){
 
   $('#reg_submit').click(function(){
     timer.stop();
-    var promise = question.test($('#reg_input').val());
-    promise.pipe(
+    question.test(
+      $('#reg_input').val()
+    ).then(
       function(){
         alert('ALL OK!!');
-        question.next(
-          function(){
-            alert("Let's Next Quiz");
-            timer.start();
-          },
-          function(){
-            alert('ALL Quiz is Complete!!');
-            location.href = location.href + '/result/input?time='+encodeURIComponent(timer.runningTime());
-          }
-        );
+        return question.next();
       },
       function(){
         timer.start();
+      }
+    ).then(
+      function(isFinish) {
+        if (isFinish) {
+          alert('ALL Quiz is Complete!!');
+          location.href = location.href + '/result/input?time='+encodeURIComponent(timer.runningTime());
+        } else {
+          alert("Let's Next Quiz");
+          timer.start();
+        }
       }
     );
   });
