@@ -26,8 +26,9 @@ $(function(){
             scriptCharset: 'utf-8',
             type: "GET",
             url: location.href+'/q/'+quizId,
-            data: {},
-            success: function(json) {
+            dataType: 'json',
+            data: {}
+          }).done(function(json) {
               console.log(json);
               if (json.isFinish) {
                 finishFunc();
@@ -43,9 +44,8 @@ $(function(){
                 $('#qnumber').html('Q'+quizId);
                 if (loadFunc) loadFunc();
               }
-            },
-            error: function(request, status, e){ alert("Internal Serve Error.") },
-            dataType: 'json'
+          }).fail(function(data){
+            alert("Internal Serve Error.")
           });
         };
     load(1);
@@ -55,32 +55,38 @@ $(function(){
         load(qid+1, loadFunc, finishFunc);
       },
       clear: function(){
-          match_list.each(function(){ ng(this) });
-          not_match_list.each(function(){ ng(this) });
+        match_list.each(function(){ ng(this) });
+        not_match_list.each(function(){ ng(this) });
       },
       test: function(input, allOkFunc, notAllOkFunc){
         var ok_match_words = [],
-            ok_not_match_words = [];
+            ok_not_match_words = [],
+            defer = $.Deferred();
         this.clear();
         $.ajax({
           scriptCharset: 'utf-8',
           type: "POST",
           url: location.href+'/q/'+qid+'/answer',
-          data: { 'answer' : input },
-          success: function(json) {
-            console.log(json);
-            match_list.each(function(){
-              if($.inArray($(this).html(), json.ok_match) !== -1) ok(this);
-            });
-            not_match_list.each(function(){
-              if($.inArray($(this).html(), json.ok_unmatch) !== -1) ok(this);
-            });
-            if(isAllOk()) allOkFunc();
-            else          notAllOkFunc();
-          },
-          error: function(request, status, e) { alert("Internal Serve Error.") },
-          dataType: 'json'
+          dataType: 'json',
+          data: { 'answer' : input }
+        }).done(function(json){
+          console.log(json);
+          match_list.filter(function(){
+            return $.inArray($(this).html(), json.ok_match) !== -1
+          }).each(function(){
+            ok(this)
+          });
+          not_match_list.filter(function(){
+            return $.inArray($(this).html(), json.ok_unmatch) !== -1
+          }).each(function(){
+            ok(this)
+          });
+          if(isAllOk()) defer.resolve();
+          else          defer.reject();
+        }).fail(function(data) {
+          alert("Internal Serve Error.");
         });
+        return defer.promise();
       }
     };
   };
@@ -97,19 +103,25 @@ $(function(){
 
   $('#reg_submit').click(function(){
     timer.stop();
-    question.test($('#reg_input').val(), function(){
-      alert('ALL OK!!');
-      question.next(function(){
-        alert("Let's Next Quiz");
+    var promise = question.test($('#reg_input').val());
+    promise.pipe(
+      function(){
+        alert('ALL OK!!');
+        question.next(
+          function(){
+            alert("Let's Next Quiz");
+            timer.start();
+          },
+          function(){
+            alert('ALL Quiz is Complete!!');
+            location.href = location.href + '/result/input?time='+encodeURIComponent(timer.runningTime());
+          }
+        );
+      },
+      function(){
         timer.start();
-      },function(){
-        alert('ALL Quiz is Complete!!');
-        location.href = location.href + '/result/input?time='+encodeURIComponent(timer.runningTime());
-      });
-    },
-    function(){
-      timer.start();
-    });
+      }
+    );
   });
 
   question.clear();
