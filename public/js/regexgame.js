@@ -25,7 +25,7 @@ $(function(){
       }).done(function(json){
         self.changeWordsState(json.ok_match, json.ok_unmatch);
       }).fail(function(data) {
-        alert("Internal Serve Error.");
+        self.trigger('error');
       });
       return defer.promise();
     },
@@ -76,6 +76,7 @@ $(function(){
     initialize: function(){
       this.listenTo(this.model, 'sync', this.render);
       this.listenTo(this.model, 'change', this.allOkAlert);
+      this.listenTo(this.model, 'error', this.serverErrorAlert);
     },
     onSubmit: function(){
       this.timer.stop();
@@ -94,6 +95,9 @@ $(function(){
     },
     allOkAlert: function(){
       if(this.model.isAllOk()) alert('ALL OK!!');
+    },
+    serverErrorAlert: function(){
+      alert("Server Error.");
     },
     render: function(){
       if (this.model.get('isFinish')) {
