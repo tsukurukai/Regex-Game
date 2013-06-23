@@ -1,92 +1,115 @@
 (function(){
 $(function(){
-  var createQuestion = function(){
-    var match_list = $([]),
-        not_match_list = $([]),
-        qid = 1,
-        ok = function(elm){
-          $(elm).addClass('ok');
-          $(elm).removeClass('ng');
-        },
-        ng = function(elm){
-          $(elm).removeClass('ok');
-          $(elm).addClass('ng');
-        },
-        isAllOk = function(){
-          var result = true;
-          match_list.each(function(){
-            if($(this).attr('class').split(' ').indexOf('ok') === -1) {
-              result = false;
-            }
-          });
-          return result;
-        },
-        load = function(quizId){
-          var defer = $.Deferred();
-          $.ajax({
-            scriptCharset: 'utf-8',
-            type: "GET",
-            url: location.href+'/q/'+quizId,
-            dataType: 'json',
-            data: {}
-          }).done(function(json) {
-            if (!json.isFinish) {
-              $('#match_list').empty();
-              $('#not_match_list').empty();
-              $('#reg_input').val('');
-              $.each(json.quiz.matches, function(){ $('#match_list').append('<li>'+this+'</li>') });
-              $.each(json.quiz.unmatches, function(){ $('#not_match_list').append('<li>'+this+'</li>') });
-              match_list = $('#match_list li');
-              not_match_list = $('#not_match_list li');
-              qid = quizId;
-              $('#qnumber').html('Q'+quizId);
-            }
-            defer.resolve(json.isFinish);
-          }).fail(function(data){
-            alert("Internal Serve Error.")
-          });
-          return defer.promise();
-        };
-    load(1);
-    return {
-      next: function(loadFunc, finishFunc) {
-        this.clear();
-        return load(qid+1);
-      },
-      clear: function(){
-        match_list.each(function(){ ng(this) });
-        not_match_list.each(function(){ ng(this) });
-      },
-      test: function(input){
-        var ok_match_words = [],
-            ok_not_match_words = [],
-            defer = $.Deferred();
-        this.clear();
-        $.ajax({
-          scriptCharset: 'utf-8',
-          type: "POST",
-          url: location.href+'/q/'+qid+'/answer',
-          dataType: 'json',
-          data: { 'answer' : input }
-        }).done(function(json){
-          match_list.each(function(){
-            if( $.inArray($(this).html(), json.ok_match) !== -1 ) ok(this)
-          });
-          not_match_list.each(function(){
-            if( $.inArray($(this).html(), json.ok_unmatch) !== -1 ) ok(this)
-          });
-          if(isAllOk()) defer.resolve();
-          else          defer.reject();
-        }).fail(function(data) {
-          alert("Internal Serve Error.");
-        });
-        return defer.promise();
-      }
-    };
-  };
-  var question = createQuestion();
+  var Quiz = Backbone.Model.extend({
+    urlRoot: location.href+'/q/',
+    parse: function(json){
+      var self = this;
+      var f = function(label){ return self.createWord(label, false) };
+      return {
+        isFinish: json.isFinish,
+        matchWords: _.map(json.quiz.matches, f),
+        notMatchWords: _.map(json.quiz.unmatches, f)
+      };
+    },
+    createWord: function(label, solved){
+      return { 'label': label, 'solved': solved };
+    },
+    test: function(input){
+      var self = this;
+      var defer = $.ajax({
+        scriptCharset: 'utf-8',
+        type: "POST",
+        url: location.href+'/q/'+this.id+'/answer',
+        dataType: 'json',
+        data: { 'answer' : input }
+      }).done(function(json){
+        self.changeWordsState(json.ok_match, json.ok_unmatch);
+      }).fail(function(data) {
+        alert("Internal Serve Error.");
+      });
+      return defer.promise();
+    },
+    changeWordsState: function(solvedMatchWords, solvedNotMatchWords){
+      var self = this;
+      var testedMatchWords = _.map(this.get('matchWords'), function(word){
+        return self.createWord( word.label, _.contains(solvedMatchWords, word.label) );
+      });
+      var testedNotMatchWords = _.map(this.get('notMatchWords'), function(word){
+        return self.createWord( word.label, (_.contains(solvedNotMatchWords, word.label)) );
+      });
+      this.set({matchWords: testedMatchWords, notMatchWords: testedNotMatchWords});
+    },
+    isAllOk: function(){
+      var isMatchWordsOk = _.every(this.get('matchWords'), function(word){ return word.solved });
+      var isNotMatchWordsOk = _.every(this.get('notMatchWords'), function(word){ return word.solved });
+      return isMatchWordsOk && isNotMatchWordsOk;
+    }
+  });
 
-  var timer = createTimer($('#timer'), 10);
+  var QuizView = Backbone.View.extend({
+    el: '#quiz',
+    initialize: function(){
+      this.listenTo(this.model, 'change', this.render);
+      this.listenTo(this.model, 'remove', this.remove);
+    },
+    template: _.template("<% _.each(items, function(item){ %>"
+                        +  "<li class='<%= item.solved ? 'ok' : 'ng' %>'><%- item.label %><li>"
+                        +"<% }) %>"),
+    render: function(){
+      if (!this.model.get('isFinish')) {
+        $('#match_list').empty();
+        $('#match_list').append(this.template( {items: this.model.get('matchWords')} ));
+        $('#not_match_list').empty();
+        $('#not_match_list').append(this.template( {items: this.model.get('notMatchWords')} ));
+      }
+      return this;
+    }
+  });
+
+  var AppView = Backbone.View.extend({
+    el: '#quizapp',
+    events: {
+      'click #reg_submit': 'onSubmit'
+    },
+    input: $('#reg_input'),
+    timer: createTimer($('#timer'), 10),
+    initialize: function(){
+      this.listenTo(this.model, 'sync', this.render);
+      this.listenTo(this.model, 'change', this.allOkAlert);
+    },
+    onSubmit: function(){
+      this.timer.stop();
+      var self = this;
+      this.model.test(
+        this.input.val()
+      ).then(function(){
+        if(self.model.isAllOk()){
+          var next = self.model.id + 1;
+          self.model.id = next;
+          self.model.fetch();
+        } else {
+          self.timer.start();
+        }
+      });
+    },
+    allOkAlert: function(){
+      if(this.model.isAllOk()) alert('ALL OK!!');
+    },
+    render: function(){
+      if (this.model.get('isFinish')) {
+        alert('ALL Quiz is Complete!!');
+        location.href = location.href + '/result/input?time='+encodeURIComponent(this.timer.runningTime());
+      } else {
+        $('#qnumber').html('Q'+this.model.id);
+        this.input.val('');
+        this.input.focus();
+        if (this.model.id > 1) {
+          alert("Let's Next Quiz");
+        }
+        this.timer.start();
+      }
+    }
+  });
 
   $(window).keypress(function(ev){
     if((ev.which && ev.which === 13) || (ev.keyCode && ev.keyCode === 13)) {
@@ -95,34 +118,12 @@ $(function(){
     }
   });
 
-  $('#reg_submit').click(function(){
-    timer.stop();
-    question.test(
-      $('#reg_input').val()
-    ).then(
-      function(){
-        alert('ALL OK!!');
-        return question.next();
-      },
-      function(){
-        timer.start();
-      }
-    ).then(
-      function(isFinish) {
-        if (isFinish) {
-          alert('ALL Quiz is Complete!!');
-          location.href = location.href + '/result/input?time='+encodeURIComponent(timer.runningTime());
-        } else {
-          alert("Let's Next Quiz");
-          timer.start();
-        }
-      }
-    );
-  });
+  var quiz = new Quiz();
+  var quizView = new QuizView({model: quiz});
+  var app = new AppView({model: quiz});
+  quiz.id = 1;
+  quiz.fetch();
 
-  question.clear();
-  $('#reg_input').focus();
-  timer.start();
 });
 }());
 

@@ -1,17 +1,17 @@
-<script src="/js/timer.js"></script>
-<script src="/js/regexgame.js"></script>
-<article>
+<article id="quizapp">
   <h1 id="qnumber">Q1</h1>
-  <section class="question left">
-    <h2>Match Words</h2>
-    <ul id="match_list">
-    </ul>
-  </section>
-  <section class="question right">
-    <h2>Don't Match Words</h2>
-    <ul id="not_match_list">
-    </ul>
-  </section>
+  <div id=#quiz>
+    <section class="question left">
+      <h2>Match Words</h2>
+      <ul id="match_list">
+      </ul>
+    </section>
+    <section class="question right">
+      <h2>Don't Match Words</h2>
+      <ul id="not_match_list">
+      </ul>
+    </section>
+  </div>
   <section id="timer"></section>
   <section class="answer">
     <form id="answer_form" action="/c/<%= @course_id %>/result/complete">
@@ -20,3 +20,7 @@
     </form>
   </section>
 </article>
+<script src="/js/underscore-min.js"></script>
+<script src="/js/backbone-min.js"></script>
+<script src="/js/timer.js"></script>
+<script src="/js/regexgame.js"></script>
