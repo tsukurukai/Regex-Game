@@ -72,7 +72,7 @@ $(function(){
       'click #reg_submit': 'onSubmit'
     },
     input: $('#reg_input'),
-    timer: createTimer($('#timer'), 10),
+    timer: createTimer(10).display(document.getElementById('timer')),
     initialize: function(){
       this.listenTo(this.model, 'sync', this.render);
       this.listenTo(this.model, 'change', this.allOkAlert);
