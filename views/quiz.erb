@@ -15,7 +15,11 @@
   <section id="timer"></section>
   <section class="answer">
     <form id="answer_form" action="/c/<%= @course_id %>/result/complete">
-      <p><span class="regex">/^</span><input type="text" id="reg_input" name="answer"/><span class="regex">$/</span></p>
+      <div id="answer_box">
+        <div class="regex">/^</div><div id="answer_in_box" class="regex">&nbsp;</div><div class="regex">$/</div>
+        <!--<input type="hidden" id="reg_input" name="answer"/>-->
+      </div>
+      <p id="answer_items"></p>
       <p><input type="button" value="OK" id="reg_submit" /></p>
     </form>
   </section>

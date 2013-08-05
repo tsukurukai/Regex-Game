@@ -79,8 +79,45 @@ section.answer {
   clear: both;
 }
 
-section.answer span.regex{
-  font-size: 270%;
+#answer_box  {
+  font-size: 250%;
+}
+
+#answer_box div.regex{
+  float: left;
+  font-size: 200%;
+  width: 100px;
+}
+
+
+#answer_box #answer_in_box  {
+  border: solid 1px #33cc00;
+  float: left;
+  font-size: 200%;
+  margin-bottom: 1em;
+  text-align: left;
+  width: 778px;
+}
+
+#answer_box #answer_in_box .selected_answer_item {
+  background-color: #99cc00;
+  font-size: 50%;
+  margin-right: 0.3em;
+  padding: 0.25em 0.5em;
+  vertical-align: middle;
+}
+
+p#answer_items {
+  clear: both;
+  position: relative;
+}
+
+p#answer_items span.answer_item  {
+  background-color: #99cc00;
+  font-size: 200%;
+  margin-right: 0.3em;
+  padding: 0.5em 1em;
+  position: absolute;
 }
 
 #reg_input {
