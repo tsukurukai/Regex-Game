@@ -105,14 +105,14 @@ $(function(){
     el: '#answer_items',
     render: function(){
       var leftSpace = 0;
-      this.collection.each(function(answerItem){
-        var answerItemView =
+      this.collection.each(function(item){
+        var choiceItemView =
           new ChoiceItemView({
-            model: answerItem,
+            model: item,
             top: 0,
             left: leftSpace
           });
-        var elem = answerItemView.render().$el;
+        var elem = choiceItemView.render().$el;
         this.$el.append(elem.get(0));
         this.$el.height(elem.outerHeight());
         leftSpace = leftSpace + elem.outerWidth() + 10;
@@ -121,11 +121,11 @@ $(function(){
     }
   });
 
-  var AnswerItems = Backbone.Collection.extend({
+  var AnsweredItems = Backbone.Collection.extend({
     model: Item,
   });
 
-  var AnswerItemView = Backbone.View.extend({
+  var AnsweredItemView = Backbone.View.extend({
     tagName: 'span',
     className: 'selected_answer_item',
     events: { 'click': 'clear' },
@@ -142,22 +142,22 @@ $(function(){
     }
   });
 
-  var AnswerItemsView = Backbone.View.extend({
+  var AnsweredItemsView = Backbone.View.extend({
     el: '#answer_in_box',
     initialize: function(){
       this.listenTo(this.collection, 'add', this.render);
     },
-    addAnswerItem: function(model){
+    addItem: function(model){
       this.collection.add({label: model.get('label')});
     },
     render: function(){
       this.$el.html('&nbsp;');
-      this.collection.each(function(answerItem){
-        var answerItemView =
-          new AnswerItemView({
-            model: answerItem
+      this.collection.each(function(item){
+        var answeredItemView =
+          new AnsweredItemView({
+            model: item
           });
-        var elem = answerItemView.render().$el;
+        var elem = answeredItemView.render().$el;
         this.$el.append(elem.get(0));
       }, this);
       return this;
@@ -174,7 +174,7 @@ $(function(){
     input: $('#reg_input'),
     timer: createTimer(10).display(document.getElementById('timer')),
     initialize: function(options){
-      this.answerItems = options.answerItems;
+      this.answeredItems = options.answeredItems;
       this.listenTo(this.model, 'sync', this.render);
       this.listenTo(this.model, 'change', this.allOkAlert);
       this.listenTo(this.model, 'error', this.serverErrorAlert);
@@ -183,7 +183,7 @@ $(function(){
       this.timer.stop();
       var self = this;
       var xs = [];
-      this.answerItems.each(function(x){
+      this.answeredItems.each(function(x){
         xs.push(x.get('label'));
       });
       console.log(xs.join(''));
@@ -243,22 +243,22 @@ $(function(){
    ,{ label: '*' }
    ,{ label: '+' }
   ]);
-  var answerItems = new AnswerItems([]);
+  var answeredItems = new AnsweredItems([]);
 
   var choiceItemsView = new ChoiceItemsView({collection: choiceItems});
-  var answerItemsView = new AnswerItemsView({collection: answerItems});
+  var answeredItemsView = new AnsweredItemsView({collection: answeredItems});
 
   var mediator = _.extend({}, Backbone.Events);
   choiceItems.each(function(choiceItem){
-    mediator.listenTo(choiceItem, 'select', _.bind(answerItemsView.addAnswerItem, answerItemsView));
+    mediator.listenTo(choiceItem, 'select', _.bind(answeredItemsView.addItem, answeredItemsView));
   });
 
   choiceItemsView.render();
-  answerItemsView.render();
+  answeredItemsView.render();
 
   var quiz = new Quiz();
   var quizView = new QuizView({model: quiz});
-  var app = new AppView({model: quiz, answerItems: answerItems});
+  var app = new AppView({model: quiz, answeredItems: answeredItems});
   quiz.id = 1;
   quiz.fetch();
 
