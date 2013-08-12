@@ -1,5 +1,9 @@
 @charset "utf-8";
 
+/**************
+ * common
+ **************/
+
 body {
   font-family: Verdana, Arial, sans-serif;
   font-size: 90%;
@@ -9,6 +13,7 @@ body {
 }
 
 header h1 {
+  float: left;
   width: 880px;
 }
 
@@ -17,56 +22,58 @@ header h1 a {
   text-decoration: none;
 }
 
-header h1,
-header p {
-  float: left;
-}
-
-#container {
+div#container {
   clear: both;
   text-align: center;
 }
 
-article {
+footer {
+  margin-top: 15em;
+  text-align: center;
+}
+
+li {
+  list-style-type: none;
+}
+
+
+
+/**************
+ * quiz
+ **************/
+
+article#quizapp {
   clear: both;
   text-align: center;
 }
 
-article h1 {
+article#quizapp h1 {
   border-bottom: solid 1px gray;
 }
 
-#quiz_list {
-  font-size: 200%;
-}
-
-section.question {
+div#quiz section.question {
   float: left;
   margin: 0px 40px;
   width: 410px;
 }
 
-section.question.left  {
+div#quiz section.question.left  {
   text-align: right;
 }
 
-section.question.right  {
+div#quiz section.question.right  {
   text-align: left;
 }
 
-ul {
+div#quiz ul#match_list {
   padding: 0;
 }
 
-ul li {
-  list-style-type: none;
-}
-
-li.ok {
+div#quiz ul#match_list li.ok {
   color: gray;
 }
 
-li.ng {
+div#quiz ul#match_list li.ng {
   color: black;
 }
 
@@ -75,22 +82,21 @@ section#timer {
   padding-top: 2em;
 }
 
-section.answer {
+section#answer {
   clear: both;
 }
 
-#answer_box  {
+section#answer div#answer_box {
   font-size: 250%;
 }
 
-#answer_box div.regex{
+section#answer div#answer_box div.regex {
   float: left;
   font-size: 200%;
   width: 100px;
 }
 
-
-#answer_box #answer_in_box  {
+section#answer div#answer_box div#answer_in_box  {
   border: solid 1px #33cc00;
   float: left;
   font-size: 200%;
@@ -99,7 +105,7 @@ section.answer {
   width: 778px;
 }
 
-#answer_box #answer_in_box .selected_answer_item {
+section#answer div#answer_box div#answer_in_box span.selected_answer_item {
   background-color: #99cc00;
   font-size: 50%;
   margin-right: 0.3em;
@@ -107,11 +113,11 @@ section.answer {
   vertical-align: middle;
 }
 
-#choice_items {
+section#answer p#choice_items {
   clear: both;
 }
 
-#choice_items span.answer_item  {
+section#answer p#choice_items span.answer_item  {
   background-color: #99cc00;
   display: block;
   float: left;
@@ -122,18 +128,36 @@ section.answer {
   width: 2.5em;
 }
 
-#submit {
+section#answer p#submit {
   clear: both;
 }
 
-#reg_input {
-  font-size: 250%;
-  width: 600px;
+
+
+/**************
+ * result_input
+ **************/
+
+span#result_time {
+  color: red;
+  font-style: bold;
+  font-size: 120%;
 }
 
-#result_list {
+
+
+/**************
+ * result
+ **************/
+
+ol#result_list {
   margin-left: 220px;
   text-align: left;
+}
+
+ol#result_list li.result_item {
+  margin-bottom: 2em;
+  margin-left: 80px;
 }
 
 #your_result {
@@ -143,21 +167,5 @@ section.answer {
   margin-bottom: 3em;
   margin-left: 0px;
   padding: 5px;
-}
-
-li.result_item {
-  margin-bottom: 2em;
-  margin-left: 80px;
-}
-
-#result_time {
-  color: red;
-  font-style: bold;
-  font-size: 120%;
-}
-
-footer {
-  margin-top: 15em;
-  text-align: center;
 }
 
