@@ -107,12 +107,12 @@ section.answer {
   vertical-align: middle;
 }
 
-p#answer_items {
+p#choice_items {
   clear: both;
   position: relative;
 }
 
-p#answer_items span.answer_item  {
+p#choice_items span.answer_item  {
   background-color: #99cc00;
   font-size: 200%;
   margin-right: 0.3em;

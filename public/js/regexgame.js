@@ -102,7 +102,7 @@ $(function(){
   });
 
   var ChoiceItemsView = Backbone.View.extend({
-    el: '#answer_items',
+    el: '#choice_items',
     render: function(){
       var leftSpace = 0;
       this.collection.each(function(item){
