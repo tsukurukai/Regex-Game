@@ -105,6 +105,7 @@ section#answer div#answer_box div#answer_in_box  {
 
 section#answer div#answer_box div#answer_in_box span.selected_answer_item {
   background-color: #99cc00;
+  cursor: pointer;
   font-size: 60%;
   margin-right: 0.3em;
   padding: 0.25em 0.5em;
@@ -117,6 +118,7 @@ section#answer p#choice_items {
 
 section#answer p#choice_items span.answer_item  {
   background-color: #99cc00;
+  cursor: pointer;
   display: block;
   float: left;
   font-size: 2em;
