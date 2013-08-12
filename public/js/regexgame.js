@@ -76,23 +76,12 @@ $(function(){
     tagName: 'span',
     className: 'answer_item',
     events: { 'click': 'select' },
-    top: 0,
-    left: 0,
-    initialize: function(options){
-      this.top = options.top;
-      this.left = options.left;
-    },
     select: function(){
       this.model.trigger('select', this.model);
-    },
-    move: function(top, left){
-      this.$el.css('top', top);
-      this.$el.css('left', left);
     },
     template: _.template("<%- label %>"),
     render: function(){
       this.$el.html(this.template(this.model.toJSON()));
-      this.move(this.top, this.left);
       return this;
     }
   });
@@ -104,18 +93,11 @@ $(function(){
   var ChoiceItemsView = Backbone.View.extend({
     el: '#choice_items',
     render: function(){
-      var leftSpace = 0;
       this.collection.each(function(item){
         var choiceItemView =
-          new ChoiceItemView({
-            model: item,
-            top: 0,
-            left: leftSpace
-          });
+          new ChoiceItemView({ model: item });
         var elem = choiceItemView.render().$el;
         this.$el.append(elem.get(0));
-        this.$el.height(elem.outerHeight());
-        leftSpace = leftSpace + elem.outerWidth() + 10;
       }, this);
       return this;
     }
