@@ -1,19 +1,19 @@
 <div id="quizapp">
   <h2 id="qnumber">Q1</h2>
   <div id="quiz">
-    <section class="question left">
+    <div class="question left">
       <h3>Match Words</h3>
       <ul id="match_list">
       </ul>
-    </section>
-    <section class="question right">
+    </div>
+    <div class="question right">
       <h3>Don't Match Words</h3>
       <ul id="not_match_list">
       </ul>
-    </section>
+    </div>
   </div>
-  <section id="timer"></section>
-  <section id="answer">
+  <div id="timer"></div>
+  <div id="answer">
     <form id="answer_form" action="/c/<%= @course_id %>/result/complete">
       <div id="answer_box">
         <div class="regex">/^</div><div id="answer_in_box" class="regex">&nbsp;</div><div class="regex">$/</div>
@@ -21,7 +21,7 @@
       <p id="choice_items"></p>
       <p id="submit"><input type="button" value="OK" id="reg_submit" /></p>
     </form>
-  </section>
+  </div>
 </div>
 <script src="/js/underscore.js"></script>
 <script src="/js/backbone.js"></script>

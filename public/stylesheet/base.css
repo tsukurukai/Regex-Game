@@ -15,22 +15,22 @@ body {
   width: 960px;
 }
 
-header h1 {
+#header h1 {
   float: left;
   width: 880px;
 }
 
-header h1 a {
+#header h1 a {
   color: #CD5C5C;
   text-decoration: none;
 }
 
-article {
+#content {
   clear: both;
   text-align: center;
 }
 
-footer {
+#footer {
   border-top: 1px solid;
   margin-top: 30px;
   text-align: right;
@@ -56,21 +56,21 @@ div#quizapp h2 {
   font-size: 32px;
 }
 
-div#quiz section.question {
+div#quiz div.question {
   float: left;
   margin: 0px 40px;
   width: 400px;
 }
 
-div#quiz section.question h3 {
+div#quiz div.question h3 {
   font-size: 20px;
 }
 
-div#quiz section.question.left  {
+div#quiz div.question.left  {
   text-align: right;
 }
 
-div#quiz section.question.right  {
+div#quiz div.question.right  {
   text-align: left;
 }
 
@@ -87,25 +87,25 @@ div#quiz ul#match_list li.ng {
   color: black;
 }
 
-section#timer {
+div#timer {
   clear: both;
   padding-top: 2em;
 }
 
-section#answer {
+div#answer {
   clear: both;
 }
 
-section#answer div#answer_box {
+div#answer div#answer_box {
   font-size: 46px;
 }
 
-section#answer div#answer_box div.regex {
+div#answer div#answer_box div.regex {
   float: left;
   width: 100px;
 }
 
-section#answer div#answer_box div#answer_in_box  {
+div#answer div#answer_box div#answer_in_box  {
   border: solid 1px #599A36;
   float: left;
   margin-bottom: 1em;
@@ -113,7 +113,7 @@ section#answer div#answer_box div#answer_in_box  {
   width: 758px;
 }
 
-section#answer div#answer_box div#answer_in_box span.selected_answer_item {
+div#answer div#answer_box div#answer_in_box span.selected_answer_item {
   background-color: #B3FFB3;
   border-radius: 5px;
   cursor: pointer;
@@ -123,11 +123,11 @@ section#answer div#answer_box div#answer_in_box span.selected_answer_item {
   vertical-align: middle;
 }
 
-section#answer p#choice_items {
+div#answer p#choice_items {
   clear: both;
 }
 
-section#answer p#choice_items span.answer_item  {
+div#answer p#choice_items span.answer_item  {
   background-color: #B3FFB3;
   border-radius: 5px;
   cursor: pointer;
@@ -140,7 +140,7 @@ section#answer p#choice_items span.answer_item  {
   width: 2.5em;
 }
 
-section#answer p#submit {
+div#answer p#submit {
   clear: both;
 }
 
