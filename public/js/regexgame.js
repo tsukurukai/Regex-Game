@@ -216,6 +216,7 @@ $(function(){
    ,{ label: ']' }
    ,{ label: '(' }
    ,{ label: ')' }
+   ,{ label: '|' }
    ,{ label: '.' }
    ,{ label: '\\w' }
    ,{ label: '\\d' }
@@ -224,6 +225,10 @@ $(function(){
    ,{ label: 'A-Z' }
    ,{ label: '*' }
    ,{ label: '+' }
+   ,{ label: 'Banana' }
+   ,{ label: 'Apple' }
+   ,{ label: 'Tiger' }
+   ,{ label: 'Cat' }
   ]);
   var answeredItems = new AnsweredItems([]);
 
