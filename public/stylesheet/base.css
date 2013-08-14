@@ -101,13 +101,8 @@ div#answer div#answer_box {
   font-size: 46px;
 }
 
-div#answer div#answer_box div.left {
+div#answer div#answer_box div.regex {
   float: left;
-  width: 100px;
-}
-
-div#answer div#answer_box div.right {
-  float: right;
   width: 100px;
 }
 
