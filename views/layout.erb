@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>Regex GAME</title>
-<link rel="stylesheet" type="text/css" href="/stylesheet/import.css">
-<script src="/js/jquery-1.10.1.js"></script>
+  <meta charset="UTF-8">
+  <title>Regex GAME</title>
+  <meta name="viewport" content"width=device-width" >
+  <link rel="stylesheet" href="/stylesheet/normalize.css">
+  <link rel="stylesheet" href="/stylesheet/base.css">
+  <script src="/js/jquery-1.10.1.js"></script>
 </head>
 <body>
-<%= erb :_header %>
 <div id="container">
+<%= erb :_header %>
+<article>
 <%= yield %>
-</div>
+</article>
 <%= erb :_footer %>
+</div>
 </body>
 </html>

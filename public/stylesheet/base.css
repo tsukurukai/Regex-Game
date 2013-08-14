@@ -22,7 +22,7 @@ header h1 a {
   text-decoration: none;
 }
 
-div#container {
+article {
   clear: both;
   text-align: center;
 }
@@ -42,19 +42,24 @@ li {
  * quiz
  **************/
 
-article#quizapp {
+div#quizapp {
   clear: both;
   text-align: center;
 }
 
-article#quizapp h1 {
+div#quizapp h2 {
   border-bottom: solid 1px gray;
+  font-size: 32px;
 }
 
 div#quiz section.question {
   float: left;
   margin: 0px 40px;
   width: 410px;
+}
+
+div#quiz section.question h3 {
+  font-size: 20px;
 }
 
 div#quiz section.question.left  {
