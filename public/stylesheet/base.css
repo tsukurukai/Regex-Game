@@ -6,9 +6,8 @@
 
 body {
   font-family: Verdana, Arial, sans-serif;
-  font-size: 90%;
   line-height: 1.5;
-  margin: 24px 10px;
+  margin: auto 10px;
 }
 
 #container {
@@ -32,8 +31,9 @@ article {
 }
 
 footer {
-  margin-top: 15em;
-  text-align: center;
+  border-top: 1px solid;
+  margin-top: 30px;
+  text-align: right;
 }
 
 li {
@@ -97,7 +97,7 @@ section#answer {
 }
 
 section#answer div#answer_box {
-  font-size: 4em;
+  font-size: 46px;
 }
 
 section#answer div#answer_box div.regex {
@@ -115,8 +115,9 @@ section#answer div#answer_box div#answer_in_box  {
 
 section#answer div#answer_box div#answer_in_box span.selected_answer_item {
   background-color: #B3FFB3;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 60%;
+  font-size: 32px;
   margin-right: 0.3em;
   padding: 0.25em 0.5em;
   vertical-align: middle;
@@ -132,7 +133,7 @@ section#answer p#choice_items span.answer_item  {
   cursor: pointer;
   display: block;
   float: left;
-  font-size: 2em;
+  font-size: 24px;
   margin-bottom: 0.5em;
   margin-right: 0.5em;
   padding: 0.2em;
@@ -152,7 +153,7 @@ section#answer p#submit {
 span#result_time {
   color: red;
   font-style: bold;
-  font-size: 120%;
+  font-size: 20px;
 }
 
 
@@ -173,7 +174,7 @@ ol#result_list li.result_item {
 
 #your_result {
   background-color: #FFCC66;
-  font-size: 120%;
+  font-size: 20px;
   margin-top: 3em;
   margin-bottom: 3em;
   margin-left: 0px;
