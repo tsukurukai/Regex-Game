@@ -125,7 +125,7 @@ $(function(){
   });
 
   var AnsweredItemsView = Backbone.View.extend({
-    el: '#answer_in_box',
+    el: '#inner',
     initialize: function(){
       this.listenTo(this.collection, 'add', this.render);
     },

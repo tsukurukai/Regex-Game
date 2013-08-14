@@ -1,0 +1,31 @@
+@charset "utf-8";
+
+/**************
+ * common
+ **************/
+
+#container {
+  width: 100%;
+}
+
+
+
+/**************
+ * quiz
+ **************/
+
+div#quiz div.question {
+  width: 50%;
+}
+
+div#answer div#answer_box div#answer_in_box  {
+  margin-left: -110px;
+  margin-right: -110px;
+  width: 100%;
+}
+
+div#answer div#answer_box div#answer_in_box div#inner {
+  margin-left: 100px;
+  margin-right: 100px;
+}
+

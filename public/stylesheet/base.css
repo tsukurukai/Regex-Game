@@ -58,12 +58,7 @@ div#quizapp h2 {
 
 div#quiz div.question {
   float: left;
-  margin: 0px 40px;
-  width: 400px;
-}
-
-div#quiz div.question h3 {
-  font-size: 20px;
+  width: 480px;
 }
 
 div#quiz div.question.left  {
@@ -74,8 +69,14 @@ div#quiz div.question.right  {
   text-align: left;
 }
 
+div#quiz div.question h3 {
+  margin: 0px 40px;
+  font-size: 20px;
+}
+
 div#quiz ul#match_list,
 div#quiz ul#not_match_list {
+  margin: 0px 40px;
   padding: 0;
 }
 
@@ -100,17 +101,25 @@ div#answer div#answer_box {
   font-size: 46px;
 }
 
-div#answer div#answer_box div.regex {
+div#answer div#answer_box div.left {
   float: left;
   width: 100px;
 }
 
+div#answer div#answer_box div.right {
+  float: right;
+  width: 100px;
+}
+
 div#answer div#answer_box div#answer_in_box  {
-  border: solid 1px #599A36;
   float: left;
   margin-bottom: 1em;
   text-align: left;
   width: 758px;
+}
+
+div#answer div#answer_box div#answer_in_box div#inner {
+  border: solid 1px #599A36;
 }
 
 div#answer div#answer_box div#answer_in_box span.selected_answer_item {
