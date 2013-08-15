@@ -39,7 +39,7 @@ div#timer {
 }
 
 div#answer div#answer_box {
-  font-size: 24px;
+  font-size: 32px;
 }
 
 div#answer div#answer_box div.regex {
@@ -53,7 +53,6 @@ div#answer div#answer_box div#answer_in_box  {
 }
 
 div#answer div#answer_box div#answer_in_box div#inner {
-  height: 40px;
   margin-left: 40px;
   margin-right: 40px;
 }
