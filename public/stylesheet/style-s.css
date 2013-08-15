@@ -65,3 +65,13 @@ div#answer div#answer_box div#answer_in_box span.selected_answer_item {
 div#answer p#choice_items span.answer_item  {
   font-size: 20px;
 }
+
+
+
+/**************
+ * result
+ **************/
+ol#result_list {
+  margin-left: 0;
+}
+
