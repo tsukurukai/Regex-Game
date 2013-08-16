@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 require 'sinatra'
+require 'sinatra/reloader' if development?
 require 'json'
 require 'erb'
+require 'pp'
 
-require 'sinatra/reloader' if development?
 
 require './model'
+require './web_admin'
 
 # TOP
 get '/' do
