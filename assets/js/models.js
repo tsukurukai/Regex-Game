@@ -1,4 +1,4 @@
-define(function(){
+define(["backbone"], function(Backbone){
   var Quiz = Backbone.Model.extend({
     urlRoot: location.href+'/q/',
     parse: function(json){

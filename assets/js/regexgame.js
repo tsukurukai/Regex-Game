@@ -1,7 +1,4 @@
-require.config({
-  baseUrl: "/js"
-});
-require(["models"], function(models){
+require(["backbone", "models"], function(Backbone, models){
   var QuizView = Backbone.View.extend({
     el: '#quiz',
     initialize: function(){
