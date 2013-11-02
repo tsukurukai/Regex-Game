@@ -154,7 +154,7 @@ $(function(){
       'click #reg_submit': 'onSubmit'
     },
     input: $('#reg_input'),
-    timer: createTimer(10).display(document.getElementById('timer')),
+    stopwatch: createStopwatch(10).display(document.getElementById('stopwatch')),
     initialize: function(options){
       this.answeredItems = options.answeredItems;
       this.listenTo(this.model, 'sync', this.render);
@@ -162,7 +162,7 @@ $(function(){
       this.listenTo(this.model, 'error', this.serverErrorAlert);
     },
     onSubmit: function(){
-      this.timer.stop();
+      this.stopwatch.stop();
       var self = this;
       var xs = [];
       this.answeredItems.each(function(x){
@@ -177,7 +177,7 @@ $(function(){
           self.model.id = next;
           self.model.fetch();
         } else {
-          self.timer.start();
+          self.stopwatch.start();
         }
       });
     },
@@ -190,7 +190,7 @@ $(function(){
     render: function(){
       if (this.model.get('isFinish')) {
         alert('ALL Quiz is Complete!!');
-        location.href = location.href + '/result/input?time='+encodeURIComponent(this.timer.runningTime());
+        location.href = location.href + '/result/input?time='+encodeURIComponent(this.stopwatch.runningTime());
       } else {
         $('#qnumber').html('Q'+this.model.id);
         this.input.val('');
@@ -198,7 +198,7 @@ $(function(){
         if (this.model.id > 1) {
           alert("Let's Next Quiz");
         }
-        this.timer.start();
+        this.stopwatch.start();
       }
       return this;
     }

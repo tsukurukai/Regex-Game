@@ -1,4 +1,4 @@
-var createTimer = function(interval){
+var createStopwatch= function(interval){
   var running = false,
       beginTime = null,
       runningTime = 0,
@@ -10,47 +10,38 @@ var createTimer = function(interval){
       },
       display = function(element){
         var a = [];
-        a.push('<span class="timer_double">');
-        a.push('<span id="timer_hour_1" class="timer_single">0</span>');
-        a.push('<span id="timer_hour_2" class="timer_single">0</span>');
+        a.push('<span class="stopwatch_double">');
+        a.push('<span id="stopwatch_hour_1" class="stopwatch_single">0</span>');
+        a.push('<span id="stopwatch_hour_2" class="stopwatch_single">0</span>');
         a.push('</span>');
         a.push('<span class="separate">:</span>');
-        a.push('<span class="timer_double">');
-        a.push('<span id="timer_minitue_1" class="timer_single">0</span>');
-        a.push('<span id="timer_minitue_2" class="timer_single">0</span>');
+        a.push('<span class="stopwatch_double">');
+        a.push('<span id="stopwatch_minitue_1" class="stopwatch_single">0</span>');
+        a.push('<span id="stopwatch_minitue_2" class="stopwatch_single">0</span>');
         a.push('</span>');
         a.push('<span class="separate">:</span>');
-        a.push('<span class="timer_double">');
-        a.push('<span id="timer_second_1" class="timer_single">0</span>');
-        a.push('<span id="timer_second_2" class="timer_single">0</span>');
+        a.push('<span class="stopwatch_double">');
+        a.push('<span id="stopwatch_second_1" class="stopwatch_single">0</span>');
+        a.push('<span id="stopwatch_second_2" class="stopwatch_single">0</span>');
         a.push('</span>');
         a.push('<span class="separate">:</span>');
-        a.push('<span class="timer_double">');
-        a.push('<span id="timer_millisec_1" class="timer_single">0</span>');
-        a.push('<span id="timer_millisec_2" class="timer_single">0</span>');
+        a.push('<span class="stopwatch_double">');
+        a.push('<span id="stopwatch_millisec_1" class="stopwatch_single">0</span>');
+        a.push('<span id="stopwatch_millisec_2" class="stopwatch_single">0</span>');
         a.push('</span>');
         element.innerHTML = a.join('');
         isDisplay = true;
         return this;
       },
       updateDisplay = function(h, m, s, ms){
-        var hour_1 = document.getElementById('timer_hour_1');
-        var hour_2 = document.getElementById('timer_hour_2');
-        var minute_1 = document.getElementById('timer_minitue_1');
-        var minute_2 = document.getElementById('timer_minitue_2');
-        var second_1 = document.getElementById('timer_second_1');
-        var second_2 = document.getElementById('timer_second_2');
-        var millisec_1 = document.getElementById('timer_millisec_1');
-        var millisec_2 = document.getElementById('timer_millisec_2');
-        textContent(hour_1, h.substring(0,1));
-        textContent(hour_2, h.substring(1));
-        textContent(hour_2, h.substring(1));
-        textContent(minute_1, m.substring(0,1));
-        textContent(minute_2, m.substring(1));
-        textContent(second_1, s.substring(0,1));
-        textContent(second_2, s.substring(1));
-        textContent(millisec_1, ms.substring(0,1));
-        textContent(millisec_2, ms.substring(1));
+        textContent(document.getElementById('stopwatch_hour_1'), h.substring(0,1));
+        textContent(document.getElementById('stopwatch_hour_2'), h.substring(1));
+        textContent(document.getElementById('stopwatch_minitue_1'), m.substring(0,1));
+        textContent(document.getElementById('stopwatch_minitue_2'), m.substring(1));
+        textContent(document.getElementById('stopwatch_second_1'), s.substring(0,1));
+        textContent(document.getElementById('stopwatch_second_2'), s.substring(1));
+        textContent(document.getElementById('stopwatch_millisec_1'), ms.substring(0,1));
+        textContent(document.getElementById('stopwatch_millisec_2'), ms.substring(1));
       }
       countup = function() {
         if (!running) return;
