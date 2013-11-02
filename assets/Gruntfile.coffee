@@ -11,4 +11,10 @@ module.exports = (grunt) ->
           name: 'regexgame'
           out: 'public/js/main.min.js'
 
+    watch:
+      requirejs:
+        files: ['assets/**/*{js,css}']
+        tasks: 'requirejs:all'
+
+  grunt.loadNpmTasks "grunt-contrib-watch"
   grunt.loadNpmTasks "grunt-contrib-requirejs"
