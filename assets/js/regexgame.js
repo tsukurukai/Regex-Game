@@ -92,7 +92,7 @@ require(["backbone", "models"], function(Backbone, models){
       'click #reg_submit': 'onSubmit'
     },
     input: $('#reg_input'),
-    stopwatch: createStopwatch(10).display(document.getElementById('stopwatch')),
+    stopwatch: Stopwatch.init(10).display(document.getElementById('stopwatch')),
     initialize: function(options){
       this.answeredItems = options.answeredItems;
       this.listenTo(this.model, 'sync', this.render);
