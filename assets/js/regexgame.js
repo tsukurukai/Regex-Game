@@ -1,4 +1,4 @@
-require(["backbone", "models"], function(Backbone, models){
+require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatch){
   var QuizView = Backbone.View.extend({
     el: '#quiz',
     initialize: function(){

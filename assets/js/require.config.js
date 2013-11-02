@@ -11,6 +11,9 @@ require.config({
     "backbone": {
       deps: ["underscore"],
       exports: "Backbone"
+    },
+    "stopwatch": {
+      exports: "Stopwatch"
     }
   }
 });
