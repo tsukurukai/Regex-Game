@@ -11,8 +11,14 @@
     <tr>
     <% obj.instance_variables.each do |var| %>
         <td>
-        <% if var.to_s == '@id' %><a href='/admin/course/detail/<%= obj.instance_variable_get(var) %>'><% end %>
+        <% if var.to_s == '@id' %>
+          <a href='/admin/course/detail/<%= obj.instance_variable_get(var) %>'>
+        <% end %>
+        <% if var.to_s == '@quizes' %>
+        <%= obj.instance_variable_get(var).length %>
+        <% else %>
         <%= obj.instance_variable_get(var) %>
+        <% end %>
         <% if var.to_s == '@id' %></a><% end %>
         </td>
     <% end %>

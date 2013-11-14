@@ -18,6 +18,7 @@ class Admin < Sinatra::Base
     get '/admin/course/detail/:course_id' do
         @course_id = params[:course_id]
         @course = Course.find_by_id(@course_id.to_i)
+        pp @course
         quiz = @course.quiz(1)
         admin_erb :"admin/course/detail" 
     end

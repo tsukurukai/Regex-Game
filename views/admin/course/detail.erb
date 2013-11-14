@@ -1,0 +1,37 @@
+[Course ID] : <%= @course.id %> <br>
+[Course name] : <%= @course.name %> <br>
+[Quizes] <br>
+<script>
+function deleteQuiz(id){
+    if($('#but_'+id).val() == 'undo'){
+        $('#but_'+id).val('delete');
+        $('#quiz_'+id).css("text-decoration", "none");
+        $('#quiz_'+id).css("background-color", "");
+    }else{
+        $('#but_'+id).val('undo');
+        $('#quiz_'+id).css("text-decoration", "line-through");
+        $('#quiz_'+id).css("background-color", "gray");
+    }
+}
+
+</script>
+<table class='list'>
+<% @course.quizes.each_with_index do |quiz,i| %>
+<tr id='quiz_<%= i %>'>
+<% quiz.each do |key,value| %>
+   <td><span style='color:gray'><%= key %> =&gt;</span>
+       <% value.each do |val| %>
+           <%= val %>
+       <% end %>
+   </td>
+<% end %>
+<td align='center'><input type='button' value='delete' id='but_<%= i %>' onclick='deleteQuiz(<%= i %>);' /></td>
+</tr>
+<% end %>
+<tr>
+<td>
+<div class='editable' contenteditable></div>
+</td><td>
+<div class='editable' contenteditable></div>
+</td><td align='center'><input type='button' value='add' /></td><tr>
+</table>
