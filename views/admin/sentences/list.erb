@@ -1,0 +1,71 @@
+[Sentences] <br>
+<script>
+function deleteSentence(id){
+    if($('#but_'+id).val() == 'undo'){
+        $('#but_'+id).val('delete');
+        $('#sent_'+id).css("text-decoration", "none");
+        $('#sent_'+id).css("background-color", "");
+    }else{
+        $('#but_'+id).val('undo');
+        $('#sent_'+id).css("text-decoration", "line-through");
+        $('#sent_'+id).css("background-color", "gray");
+    }
+    $('#save').removeAttr('disabled');
+}
+var line = <%= @results.length %>
+
+function addSentence(){
+    var text = $('.editable').text();
+    if(text == '') return;
+    $('.list tbody').append('<tr id=\'sent_'+line+'\'><td id=\'sent\'>'+text+'</td>' + '<td align=\'center\'><input type=\'button\' value=\'delete\' id=\'but_'+line+'\' onclick=\'deleteSentence('+line+');\' /></td></tr>');
+    line++;
+    $('.editable').text('');
+    $('#save').removeAttr('disabled');
+}
+
+function save(){
+    xx=new Array();
+    $('tbody tr').each(function(){
+        var sent = $(this).find('#sent').text();
+        var but = $(this).find('input').val(); 
+        if(sent != "" && but != 'undo') xx.push(sent);
+
+    });
+    var json = $.toJSON(xx);
+
+    $("#hidsent").val(json);
+    $("#form1").submit();
+}
+
+</script>
+<style>
+table.list td span{
+    color:gray;
+}
+
+</style>
+
+  <div style="width:600px" class='editable' contenteditable></div>
+  <input type='button' value='add' onclick='addSentence();' />
+  <input id='save' type='button' value='変更を反映' onclick='save();' disabled />
+
+
+<div style="margin-top:10px"></div>
+<table class='list'>
+<thead><tr><th style="width:600px;">問題文</th><th>操作</th></tr></thead>
+<tbody>
+<% @results.each_with_index do |val,i| %>
+<tr id='sent_<%= i %>'>
+   <td id='sent'>
+       <%= val.sentence %>
+   </td>
+   <td align='center'><input type='button' value='delete' id='but_<%= i %>' onclick='deleteSentence(<%= i %>);' /></td>
+</tr>
+<% end %>
+</tbody>
+</table>
+
+
+<form method="post" name="form1" id="form1" action='/admin/sentences/save'>
+    <input type="hidden" name="sentences" id="hidsent" value="444" />
+</form>
