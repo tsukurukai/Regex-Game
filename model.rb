@@ -128,18 +128,6 @@ class Ranking < BaseModel
     return list
   end
 
-# 使われてない？
-#  def find(username)
-#    i=1;
-#    @coll.find().sort(:time).each do |slice|
-#      if slice['name'] == username
-#        return i;
-#      end
-#      i +=1
-#    end
-#    return nil
-#  end
-
   def save
     h = Hash.new
     h['name'] = @name
@@ -148,3 +136,27 @@ class Ranking < BaseModel
   end
 end
 
+class Sentences < BaseModel
+  attr_reader :sentence
+  def initialize(sentence)
+    @sentence = sentence
+  end
+
+  def self.all()
+    res = Array.new
+    db.collection('sentences').find().each{|co|
+      res.push(Sentences.new(co['sentence']))
+    }
+    return res
+  end
+
+  def self.drop()
+    db.collection('sentences').drop()
+  end
+
+  def save
+    h = Hash.new
+    h['sentence'] = @sentence
+    Ranking.db.collection('sentences').insert(h)
+  end
+end

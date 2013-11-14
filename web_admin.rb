@@ -10,17 +10,19 @@ class Admin < Sinatra::Base
         admin_erb :'admin/index' 
     end
 
-    get '/admin/course/list' do
-        @results = Course.all 
-        admin_erb :"admin/course/list" 
+    get '/admin/sentences/list' do
+        @results = Sentences.all 
+        p @results
+        admin_erb :"admin/sentences/list" 
     end
 
-    get '/admin/course/detail/:course_id' do
-        @course_id = params[:course_id]
-        @course = Course.find_by_id(@course_id.to_i)
-        pp @course
-        quiz = @course.quiz(1)
-        admin_erb :"admin/course/detail" 
+    post '/admin/sentences/save' do
+        Sentences.drop;
+        JSON.parse(params[:sentences]).each{|baka|
+            Sentences.new(baka.to_s).save;
+        }
+        @results = Sentences.all 
+        admin_erb :"admin/sentences/list" 
     end
 
     def admin_erb(template, options={}) 
