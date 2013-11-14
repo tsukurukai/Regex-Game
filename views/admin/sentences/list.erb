@@ -17,7 +17,7 @@ var line = <%= @results.length %>
 function addSentence(){
     var text = $('.editable').text();
     if(text == '') return;
-    $('.list tbody').append('<tr id=\'sent_'+line+'\'><td id=\'sent\'>'+text+'</td>' + '<td align=\'center\'><input type=\'button\' value=\'delete\' id=\'but_'+line+'\' onclick=\'deleteSentence('+line+');\' /></td></tr>');
+    $('.list tbody').append('<tr id=\'sent_'+line+'\'><td id=\'sent\'>'+text+'</td>' + '<td class=\'but\'><input type=\'button\' value=\'delete\' id=\'but_'+line+'\' onclick=\'deleteSentence('+line+');\' /></td></tr>');
     line++;
     $('.editable').text('');
     $('#save').removeAttr('disabled');
@@ -42,6 +42,15 @@ function save(){
 table.list td span{
     color:gray;
 }
+table.list td#sent{
+    word-break:break-all;
+    width:700px;
+}
+
+table.list td.but{
+    text-align:center;
+    width:60px;
+}
 
 </style>
 
@@ -59,7 +68,7 @@ table.list td span{
    <td id='sent'>
        <%= val.sentence %>
    </td>
-   <td align='center'><input type='button' value='delete' id='but_<%= i %>' onclick='deleteSentence(<%= i %>);' /></td>
+   <td class='but'><input type='button' value='delete' id='but_<%= i %>' onclick='deleteSentence(<%= i %>);' /></td>
 </tr>
 <% end %>
 </tbody>
