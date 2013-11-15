@@ -16,8 +16,8 @@ class Admin < Sinatra::Base
           h[:target_start_index] = val.target_start_index
           h[:target_length]      = val.target_length
           h[:pref]               = val.sentence.slice(0, val.target_start_index.to_i)
-          h[:target]             = val.sentence.slice(val.target_start_index.to_i..(val.target_start_index.to_i + val.target_length.to_i))
-          h[:suff]               = val.sentence.slice((val.target_start_index.to_i + 1 + val.target_length.to_i)..val.sentence.length.to_i)
+          h[:target]             = val.sentence.slice(val.target_start_index.to_i..(val.target_start_index.to_i + val.target_length.to_i - 1))
+          h[:suff]               = val.sentence.slice((val.target_start_index.to_i + val.target_length.to_i)..val.sentence.length.to_i)
           h
         end
         admin_erb :"admin/sentences/list"
