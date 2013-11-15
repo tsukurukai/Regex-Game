@@ -11,7 +11,7 @@ class Admin < Sinatra::Base
     end
 
     get '/admin/sentences/list' do
-        @results = Sentences.all.map do |val|
+        @results = Quiz.all.map do |val|
           h = {}
           h[:target_start_index] = val.target_start_index
           h[:target_length]      = val.target_length
@@ -24,11 +24,11 @@ class Admin < Sinatra::Base
     end
 
     post '/admin/sentences/save' do
-        Sentences.drop;
+        Quiz.drop;
         JSON.parse(params[:sentences]).each{|baka|
-            Sentences.new(baka["sentence"], baka["targetStartIndex"], baka["targetLength"]).save;
+            Quiz.new(baka["sentence"], baka["targetStartIndex"], baka["targetLength"]).save;
         }
-        @results = Sentences.all
+        @results = Quiz.all
         redirect "/admin/sentences/list"
     end
 

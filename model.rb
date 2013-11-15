@@ -136,7 +136,7 @@ class Ranking < BaseModel
   end
 end
 
-class Sentences < BaseModel
+class Quiz < BaseModel
   attr_reader :sentence, :target_start_index, :target_length
   def initialize(sentence, target_start_index, target_length)
     @sentence = sentence
@@ -146,14 +146,14 @@ class Sentences < BaseModel
 
   def self.all()
     res = Array.new
-    db.collection('sentences').find().each{|co|
-      res.push(Sentences.new(co['sentence'], co['target_start_index'], co['target_length']))
+    db.collection('quizzes').find().each{|co|
+      res.push(Quiz.new(co['sentence'], co['target_start_index'], co['target_length']))
     }
     return res
   end
 
   def self.drop()
-    db.collection('sentences').drop()
+    db.collection('quizzes').drop()
   end
 
   def save
@@ -161,6 +161,6 @@ class Sentences < BaseModel
     h['sentence'] = @sentence
     h['target_start_index'] = @target_start_index
     h['target_length'] = @target_length
-    Ranking.db.collection('sentences').insert(h)
+    Ranking.db.collection('quizzes').insert(h)
   end
 end
