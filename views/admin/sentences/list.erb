@@ -1,5 +1,7 @@
-[Sentences] <br>
+[Quiz] <br>
 <script>
+var line = <%= @results.length %>
+
 function deleteSentence(id){
     if($('#but_'+id).val() == 'undo'){
         $('#but_'+id).val('delete');
@@ -12,15 +14,30 @@ function deleteSentence(id){
     }
     $('#save').removeAttr('disabled');
 }
-var line = <%= @results.length %>
 
-function addSentence(){
+function setTarget(){
     var sentence = $('#sentence').text();
     if(sentence == '') return;
     var target = window.getSelection().toString();
     var startIndex = sentence.indexOf(target);
+    $('#targetStartIndexText').val(startIndex);
+    $('#targetLengthText').val(target.length);
+}
+
+function addSentence(){
+    var sentence = $('#sentence').text();
+    var startIndexText = $('#targetStartIndexText').val();
+    var targetLengthText = $('#targetLengthText').val();
+    if(sentence == '') return;
+    if(! $.isNumeric(startIndexText)) return;
+    if(! $.isNumeric(targetLengthText)) return;
+    var startIndex = parseInt(startIndexText);
+    var targetLength = parseInt(targetLengthText);
+    console.log(startIndex);
+    console.log(targetLength);
+    var target = sentence.substring(startIndex, startIndex + targetLength);
     var pref = sentence.substring(0, startIndex);
-    var suf = sentence.substring(startIndex + target.length);
+    var suf = sentence.substring(startIndex + targetLength);
     var arr = [];
     arr.push('<tr id="sent_'+line+'">');
     arr.push(  '<td id="sent">');
@@ -72,11 +89,22 @@ table.list td.but{
     width:60px;
 }
 
+#target {
+  font-size: 0.7em;
+}
+
 </style>
 
-  <div style="width:600px" id='sentence' class='editable' contenteditable></div>
+<p><label for="sentence">[sentence]</label><div style="width:600px" id='sentence' class='editable' contenteditable></div></p>
+<p><input type="button" value="↓↓↓" onclick="setTarget()" />ドラッグで反転させた内容を反映させる</p>
+<p id="target">
+  <label for="targetStartIndexText">マッチ対象文字列の開始位置</label><input id="targetStartIndexText" class='editable' type='text' />
+  <label for="targetLengthText">マッチ対象文字列の長さ</label><input id="targetLengthText" class='editable' type='text' />
+</p>
+<p>
   <input type='button' value='add' onclick='addSentence();' />
   <input id='save' type='button' value='変更を反映' onclick='save();' disabled />
+</p>
 
 
 <div style="margin-top:10px"></div>
