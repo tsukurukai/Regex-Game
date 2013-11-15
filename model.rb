@@ -137,15 +137,17 @@ class Ranking < BaseModel
 end
 
 class Sentences < BaseModel
-  attr_reader :sentence
-  def initialize(sentence)
+  attr_reader :sentence, :target_start_index, :target_length
+  def initialize(sentence, target_start_index, target_length)
     @sentence = sentence
+    @target_start_index = target_start_index
+    @target_length = target_length
   end
 
   def self.all()
     res = Array.new
     db.collection('sentences').find().each{|co|
-      res.push(Sentences.new(co['sentence']))
+      res.push(Sentences.new(co['sentence'], co['target_start_index'], co['target_length']))
     }
     return res
   end
@@ -157,6 +159,8 @@ class Sentences < BaseModel
   def save
     h = Hash.new
     h['sentence'] = @sentence
+    h['target_start_index'] = @target_start_index
+    h['target_length'] = @target_length
     Ranking.db.collection('sentences').insert(h)
   end
 end

@@ -15,25 +15,45 @@ function deleteSentence(id){
 var line = <%= @results.length %>
 
 function addSentence(){
-    var text = $('.editable').text();
-    if(text == '') return;
-    $('.list tbody').append('<tr id=\'sent_'+line+'\'><td id=\'sent\'>'+text+'</td>' + '<td class=\'but\'><input type=\'button\' value=\'delete\' id=\'but_'+line+'\' onclick=\'deleteSentence('+line+');\' /></td></tr>');
+    var sentence = $('#sentence').text();
+    if(sentence == '') return;
+    var target = window.getSelection().toString();
+    var startIndex = sentence.indexOf(target);
+    var pref = sentence.substring(0, startIndex);
+    var suf = sentence.substring(startIndex + target.length);
+    var arr = [];
+    arr.push('<tr id="sent_'+line+'">');
+    arr.push(  '<td id="sent">');
+    arr.push(    pref + '<strong style="color:red">'+target+'</strong>'+suf);
+    arr.push(    '<input type="hidden" id="targetStartIndex_' +line+'" value="' +startIndex+'" />')
+    arr.push(    '<input type="hidden" id="targetLength_' +line+'" value="' +target.length+'" />')
+    arr.push(  '</td>');
+    arr.push(  '<td class="but">');
+    arr.push(    '<input type="button" value="delete" id="but_'+line+'" onclick="deleteSentence('+line+');" />')
+    arr.push(  '</td>');
+    arr.push('</tr>');
+    $('.list tbody').append(arr.join(''));
     line++;
     $('.editable').text('');
     $('#save').removeAttr('disabled');
 }
 
 function save(){
-    xx=new Array();
-    $('tbody tr').each(function(){
+    var xx=new Array();
+    $('tbody tr').each(function(i){
         var sent = $(this).find('#sent').text();
-        var but = $(this).find('input').val(); 
-        if(sent != "" && but != 'undo') xx.push(sent);
-
+        var targetStartIndex = $(this).find('#targetStartIndex_'+i).val();
+        var targetLength = $(this).find('#targetLength_'+i).val();
+        var but = $(this).find('.but input').val();
+        if(sent != "" && targetStartIndex != "" && targetLength != "" && but != 'undo') {
+          xx.push({
+            'sentence': $.trim(sent),
+            'targetStartIndex': parseInt(targetStartIndex),
+            'targetLength': parseInt(targetLength)
+          });
+        }
     });
-    var json = $.toJSON(xx);
-
-    $("#hidsent").val(json);
+    $("#hidsent").val($.toJSON(xx));
     $("#form1").submit();
 }
 
@@ -54,7 +74,7 @@ table.list td.but{
 
 </style>
 
-  <div style="width:600px" class='editable' contenteditable></div>
+  <div style="width:600px" id='sentence' class='editable' contenteditable></div>
   <input type='button' value='add' onclick='addSentence();' />
   <input id='save' type='button' value='変更を反映' onclick='save();' disabled />
 
@@ -66,7 +86,9 @@ table.list td.but{
 <% @results.each_with_index do |val,i| %>
 <tr id='sent_<%= i %>'>
    <td id='sent'>
-       <%= val.sentence %>
+     <%= val[:pref] %><strong style="color:red"><%= val[:target] %></strong><%= val[:suff] %>
+     <input type="hidden" id="targetStartIndex_<%= i %>" value="<%= val[:target_start_index] %>">
+     <input type="hidden" id="targetLength_<%= i %>" value="<%= val[:target_length] %>">
    </td>
    <td class='but'><input type='button' value='delete' id='but_<%= i %>' onclick='deleteSentence(<%= i %>);' /></td>
 </tr>
