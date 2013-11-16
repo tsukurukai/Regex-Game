@@ -163,4 +163,8 @@ class Quiz < BaseModel
     h['target_length'] = @target_length
     Ranking.db.collection('quizzes').insert(h)
   end
+
+  def target_end_index
+    @target_start_index + @target_length - 1
+  end
 end

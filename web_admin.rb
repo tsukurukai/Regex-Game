@@ -12,13 +12,13 @@ class Admin < Sinatra::Base
 
     get '/admin/sentences/list' do
         @results = Quiz.all.map do |val|
-          h = {}
-          h[:target_start_index] = val.target_start_index
-          h[:target_length]      = val.target_length
-          h[:pref]               = val.sentence.slice(0, val.target_start_index.to_i)
-          h[:target]             = val.sentence.slice(val.target_start_index.to_i..(val.target_start_index.to_i + val.target_length.to_i - 1))
-          h[:suff]               = val.sentence.slice((val.target_start_index.to_i + val.target_length.to_i)..val.sentence.length.to_i)
-          h
+          {
+            target_start_index: val.target_start_index,
+            target_length: val.target_length,
+            pref: val.sentence.slice(0, val.target_start_index),
+            target: val.sentence.slice(val.target_start_index..(val.target_end_index)),
+            suff: val.sentence.slice((val.target_end_index + 1)..val.sentence.length),
+          }
         end
         admin_erb :"admin/sentences/list"
     end
