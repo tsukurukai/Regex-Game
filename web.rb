@@ -19,10 +19,22 @@ end
 # render quiz
 get '/c/:course_id' do
   @course_id = params[:course_id]
+  @quiz = Quiz.find_by_random
   erb :quiz
 end
 
 # quiz
+get '/quizzes/:quiz_id' do
+  quiz_id   = params[:quiz_id].to_s
+  quiz = Quiz.find_by_id(quiz_id)
+  {
+    id: quiz.id,
+    sentence: quiz.sentence,
+    targetStartIndex: quiz.target_start_index,
+    targetLength: quiz.target_length
+  }.to_json
+end
+
 # render quiz
 get '/c/:course_id/q/:quiz_id' do
   @course_id = params[:course_id]

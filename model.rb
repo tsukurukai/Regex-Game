@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'mongo'
 require 'json'
+require 'bson'
 
 class BaseModel
 private
@@ -137,8 +138,9 @@ class Ranking < BaseModel
 end
 
 class Quiz < BaseModel
-  attr_reader :sentence, :target_start_index, :target_length
-  def initialize(sentence, target_start_index, target_length)
+  attr_reader :id, :sentence, :target_start_index, :target_length
+  def initialize(id, sentence, target_start_index, target_length)
+    @id = id
     @sentence = sentence
     @target_start_index = target_start_index
     @target_length = target_length
@@ -147,13 +149,29 @@ class Quiz < BaseModel
   def self.all()
     res = Array.new
     db.collection('quizzes').find().each{|co|
-      res.push(Quiz.new(co['sentence'], co['target_start_index'], co['target_length']))
+      res.push(Quiz.new(co['_id'], co['sentence'], co['target_start_index'], co['target_length']))
     }
     return res
   end
 
   def self.drop()
     db.collection('quizzes').drop()
+  end
+
+  def self.find_by_random
+    count = db.collection('quizzes').count()
+    random = rand count
+    res = db.collection('quizzes').find().limit(-1).skip(random).next
+    Quiz.new(res['_id'], res['sentence'], res['target_start_index'], res['target_length'])
+  end
+
+  def self.find_by_id(id)
+    row = db.collection('quizzes').find_one('_id' => BSON::ObjectId(id))
+    if row.nil?
+      nil
+    else
+      Quiz.new(row['_id'], row['sentence'], row['target_start_index'], row['target_length'])
+    end
   end
 
   def save

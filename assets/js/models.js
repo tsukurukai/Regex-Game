@@ -6,6 +6,7 @@ define(["backbone"], function(Backbone){
       targetLength: 0,
       resolved: false
     },
+    urlRoot: '/quizzes',
     test: function(input){
       var self = this;
       var defer = $.ajax({
