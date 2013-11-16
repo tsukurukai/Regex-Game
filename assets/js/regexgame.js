@@ -1,20 +1,23 @@
 require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatch){
   var QuizView = Backbone.View.extend({
     el: '#quiz',
-    initialize: function(){
+    initialize: function(options){
       this.listenTo(this.model, 'change', this.render);
-      this.listenTo(this.model, 'remove', this.remove);
     },
-    template: _.template("<% _.each(items, function(item){ %>"
-                        +  "<li class='<%= item.solved ? 'ok' : 'ng' %>'><%- item.label %><li>"
-                        +"<% }) %>"),
+    template: _.template("<%- pref %><strong><%- target %></strong><%- suff %>"),
     render: function(){
-      if (!this.model.get('isFinish')) {
-        $('#match_list').empty();
-        $('#match_list').append(this.template( {items: this.model.get('matchWords')} ));
-        $('#not_match_list').empty();
-        $('#not_match_list').append(this.template( {items: this.model.get('notMatchWords')} ));
-      }
+      console.log("quis.render");
+      var sentence = this.model.get("sentence");
+      var targetStartIndex = this.model.get("targetStartIndex");
+      var targetEndIndex = this.model.get("targetStartIndex") + this.model.get("targetLength");
+      var pref = sentence.substring(0, targetStartIndex);
+      var target = sentence.substring(targetStartIndex, targetEndIndex);
+      var suff = sentence.substring(targetEndIndex);
+      this.$el.html(this.template({
+        'pref': pref,
+        'target': target,
+        'suff': suff
+      }));
       return this;
     }
   });
@@ -95,8 +98,6 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
     stopwatch: Stopwatch.init(10).display(document.getElementById('stopwatch')),
     initialize: function(options){
       this.answeredItems = options.answeredItems;
-      this.listenTo(this.model, 'sync', this.render);
-      this.listenTo(this.model, 'change', this.allOkAlert);
       this.listenTo(this.model, 'error', this.serverErrorAlert);
     },
     onSubmit: function(){
@@ -110,7 +111,7 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
       this.model.test(
         xs.join('')
       ).then(function(){
-        if(self.model.isAllOk()){
+        if(self.model.get('resolved')){
           var next = self.model.id + 1;
           self.model.id = next;
           self.model.fetch();
@@ -126,16 +127,16 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
       alert("Server Error.");
     },
     render: function(){
-      if (this.model.get('isFinish')) {
+      if (this.model.get('resolved')) {
         alert('ALL Quiz is Complete!!');
         location.href = location.href + '/result/input?time='+encodeURIComponent(this.stopwatch.runningTime());
       } else {
-        $('#qnumber').html('Q'+this.model.id);
-        this.input.val('');
-        this.input.focus();
-        if (this.model.id > 1) {
-          alert("Let's Next Quiz");
-        }
+        //$('#qnumber').html('Q'+this.model.id);
+        //this.input.val('');
+        //this.input.focus();
+        //if (this.model.id > 1) {
+        //  alert("Let's Next Quiz");
+        //}
         this.stopwatch.start();
       }
       return this;
@@ -181,11 +182,14 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
   choiceItemsView.render();
   answeredItemsView.render();
 
-  var quiz = new models.Quiz();
+  var quiz = new models.Quiz({
+    sentence: "aaabbbccc",
+    targetStartIndex: 3,
+    targetLength: 3
+  });
   var quizView = new QuizView({model: quiz});
   var app = new AppView({model: quiz, answeredItems: answeredItems});
-  quiz.id = 1;
-  quiz.fetch();
-
+  quizView.render();
+  app.render();
 });
 

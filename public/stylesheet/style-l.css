@@ -61,6 +61,14 @@ div#quizapp h2 {
   font-size: 32px;
 }
 
+div#quiz {
+  font-size: 3em;
+}
+
+div#quiz strong {
+  color: red;
+}
+
 div#quiz div.question {
   float: left;
   width: 480px;
