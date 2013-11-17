@@ -119,7 +119,10 @@ div#answer div#answer_box div.regex {
   width: 100px;
 }
 
-div#answer div#answer_box div#answer_in_box  {
+div#answer div#answer_box #answer_in_box  {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   float: left;
   margin-bottom: 1em;
   text-align: left;

@@ -33,15 +33,10 @@ define(["backbone"], function(Backbone){
     model: Item
   });
 
-  var AnsweredItems = Backbone.Collection.extend({
-    model: Item,
-  });
-
   var module = {
     Quiz: Quiz,
     Item: Item,
-    ChoiceItems: ChoiceItems,
-    AnsweredItems: AnsweredItems
+    ChoiceItems: ChoiceItems
   };
   return module;
 });
