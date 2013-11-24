@@ -5,17 +5,14 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
   Regexgame.QuizView = Backbone.View.extend({
     el: '#quiz',
     initialize: function(options){
-      this.listenTo(this.model, 'destory', this.remove);
+      this.listenTo(this.model, 'change:resolved', this.remove);
     },
     test: function(answer){
-      var that = this,
-          model = this.model;
+      var that = this;
       that.model.test(
         answer
       ).then(function(){
-        var resolved = model.get("resolved");
-        if(resolved === true) model.destroy();
-        Regexgame.Event.trigger('answerEnd', resolved);
+        Regexgame.Event.trigger('answerEnd', that.model.get("resolved"));
       });
     },
     template: _.template("<%- pref %><strong><%- target %></strong><%- suff %>"),
@@ -36,7 +33,7 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
       return this;
     },
     remove: function(){
-      this.$el.html('');
+      if (this.model.get('resolved') === true) this.$el.html('');
       return this;
     }
   });
