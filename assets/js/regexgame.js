@@ -1,6 +1,7 @@
 require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatch){
+  var Regexgame = {};
 
-  var QuizView = Backbone.View.extend({
+  Regexgame.QuizView = Backbone.View.extend({
     el: '#quiz',
     initialize: function(options){
       this.mediator = options.mediator;
@@ -40,7 +41,7 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
     }
   });
 
-  var ChoiceItemView = Backbone.View.extend({
+  Regexgame.ChoiceItemView = Backbone.View.extend({
     tagName: 'span',
     className: 'answer_item',
     events: { 'click': 'select' },
@@ -57,7 +58,7 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
     }
   });
 
-  var ChoiceItemsView = Backbone.View.extend({
+  Regexgame.ChoiceItemsView = Backbone.View.extend({
     el: '#choice_items',
     initialize: function(options){
       this.mediator = options.mediator;
@@ -67,7 +68,7 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
           m = this.mediator;
       this.collection.each(function(item){
         var choiceItemView =
-          new ChoiceItemView({
+          new Regexgame.ChoiceItemView({
             model: item,
             mediator: m
           });
@@ -78,7 +79,7 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
     }
   });
 
-  var AnswerView = Backbone.View.extend({
+  Regexgame.AnswerView = Backbone.View.extend({
     el: '#answer_form',
     input: '#answer_in_box',
     events: {
@@ -103,7 +104,7 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
     }
   });
 
-  var AppView = Backbone.View.extend({
+  Regexgame.AppView = Backbone.View.extend({
     quiz: null,
     quizCount: 0,
     stopwatch: Stopwatch.init(10).display(document.getElementById('stopwatch')),
@@ -129,8 +130,8 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
            ,{ label: 'Tiger' }
            ,{ label: 'Cat' }
           ]),
-          choiceItemsView = new ChoiceItemsView({collection: choiceItems, mediator: mediator}),
-          answerView = new AnswerView({mediator: mediator})
+          choiceItemsView = new Regexgame.ChoiceItemsView({collection: choiceItems, mediator: mediator}),
+          answerView = new Regexgame.AnswerView({mediator: mediator})
       ;
       answerView.listenTo(mediator, 'selectChoiceItem', answerView.addVal);
       answerView.listenTo(mediator, 'answerEnd', answerView.renderAnswerResult);
@@ -153,7 +154,7 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
           });
       defer.done(function(json){
         var quiz = new models.Quiz(json),
-            quizView = new QuizView({model: quiz, mediator: self.mediator});
+            quizView = new Regexgame.QuizView({model: quiz, mediator: self.mediator});
         self.quizCount = self.quizCount + 1;
         quizView.listenTo(self.mediator, 'answer', quizView.test);
         quizView.render();
@@ -165,7 +166,6 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
       return defer.promise();
     },
     render: function(resolved){
-      console.log('render');
       if (resolved && this.quizCount > 5) {
         alert('ALL Quiz is Complete!!');
         location.href = location.href + '/result/input?time='+encodeURIComponent(this.stopwatch.runningTime());
@@ -189,6 +189,6 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
     }
   });
 
-  var appView = new AppView();
+  var appView = new Regexgame.AppView();
 });
 
