@@ -1,10 +1,10 @@
 require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatch){
   var Regexgame = {};
+  Regexgame.Event = _.extend({}, Backbone.Events);
 
   Regexgame.QuizView = Backbone.View.extend({
     el: '#quiz',
     initialize: function(options){
-      this.mediator = options.mediator;
       this.listenTo(this.model, 'destory', this.remove);
     },
     test: function(answer){
@@ -15,7 +15,7 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
       ).then(function(){
         var resolved = model.get("resolved");
         if(resolved === true) model.destroy();
-        self.mediator.trigger('answerEnd', resolved);
+        Regexgame.Event.trigger('answerEnd', resolved);
       });
     },
     template: _.template("<%- pref %><strong><%- target %></strong><%- suff %>"),
@@ -45,11 +45,8 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
     tagName: 'span',
     className: 'answer_item',
     events: { 'click': 'select' },
-    initialize: function(options){
-      this.mediator = options.mediator;
-    },
     select: function(){
-      this.mediator.trigger('selectChoiceItem', this.model);
+      Regexgame.Event.trigger('selectChoiceItem', this.model);
     },
     template: _.template("<%- label %>"),
     render: function(){
@@ -60,18 +57,10 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
 
   Regexgame.ChoiceItemsView = Backbone.View.extend({
     el: '#choice_items',
-    initialize: function(options){
-      this.mediator = options.mediator;
-    },
     render: function(){
-      var self = this,
-          m = this.mediator;
+      var self = this;
       this.collection.each(function(item){
-        var choiceItemView =
-          new Regexgame.ChoiceItemView({
-            model: item,
-            mediator: m
-          });
+        var choiceItemView = new Regexgame.ChoiceItemView({model: item});
         var elem = choiceItemView.render().$el;
         self.$el.append(elem.get(0));
       }, this);
@@ -85,11 +74,8 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
     events: {
       'click #reg_submit': 'onSubmit'
     },
-    initialize: function(options){
-      this.mediator = options.mediator;
-    },
     onSubmit: function(){
-      this.mediator.trigger('answer', this.$(this.input).val());
+      Regexgame.Event.trigger('answer', this.$(this.input).val());
     },
     addVal: function(selectedItem) {
       var input = this.$(this.input);
@@ -110,7 +96,6 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
     stopwatch: Stopwatch.init(10).display(document.getElementById('stopwatch')),
     initialize: function(){
       var self = this,
-          mediator = _.extend({}, Backbone.Events),
           choiceItems = new models.ChoiceItems([
             { label: '[' }
            ,{ label: ']' }
@@ -130,18 +115,17 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
            ,{ label: 'Tiger' }
            ,{ label: 'Cat' }
           ]),
-          choiceItemsView = new Regexgame.ChoiceItemsView({collection: choiceItems, mediator: mediator}),
-          answerView = new Regexgame.AnswerView({mediator: mediator})
+          choiceItemsView = new Regexgame.ChoiceItemsView({collection: choiceItems}),
+          answerView = new Regexgame.AnswerView()
       ;
-      answerView.listenTo(mediator, 'selectChoiceItem', answerView.addVal);
-      answerView.listenTo(mediator, 'answerEnd', answerView.renderAnswerResult);
-      self.listenTo(mediator, 'answer', function(){ self.stopwatch.stop() });
-      self.listenTo(mediator, 'answerEnd', self.render);
+      answerView.listenTo(Regexgame.Event, 'selectChoiceItem', answerView.addVal);
+      answerView.listenTo(Regexgame.Event, 'answerEnd', answerView.renderAnswerResult);
+      self.listenTo(Regexgame.Event, 'answer', function(){ self.stopwatch.stop() });
+      self.listenTo(Regexgame.Event, 'answerEnd', self.render);
 
       choiceItemsView.render();
       answerView.render();
 
-      self.mediator = mediator;
       self.nextQuiz($('#firstQuizId').val())
     },
     nextQuiz: function(){
@@ -154,9 +138,9 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
           });
       defer.done(function(json){
         var quiz = new models.Quiz(json),
-            quizView = new Regexgame.QuizView({model: quiz, mediator: self.mediator});
+            quizView = new Regexgame.QuizView({model: quiz});
         self.quizCount = self.quizCount + 1;
-        quizView.listenTo(self.mediator, 'answer', quizView.test);
+        quizView.listenTo(Regexgame.Event, 'answer', quizView.test);
         quizView.render();
         self.render();
       }).fail(function(data) {
