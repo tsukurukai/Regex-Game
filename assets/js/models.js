@@ -8,8 +8,7 @@ define(["backbone"], function(Backbone){
     },
     urlRoot: '/quizzes',
     test: function(input){
-      var self = this;
-      console.log(this.id.$oid);
+      var that = this;
       var defer = $.ajax({
         scriptCharset: 'utf-8',
         type: "POST",
@@ -20,10 +19,10 @@ define(["backbone"], function(Backbone){
         function(json){
           var nextQuiz;
           if (json.resolved) {
-            self.set("resolved", true);
+            that.set("resolved", true);
             nextQuiz = json.nextQuiz;
           } else {
-            self.set("resolved", false);
+            that.set("resolved", false);
             nextQuiz = null;
           }
           return nextQuiz;
