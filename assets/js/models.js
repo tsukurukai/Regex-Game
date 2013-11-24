@@ -9,17 +9,29 @@ define(["backbone"], function(Backbone){
     urlRoot: '/quizzes',
     test: function(input){
       var self = this;
+      console.log(this.id.$oid);
       var defer = $.ajax({
         scriptCharset: 'utf-8',
         type: "POST",
-        url: location.href+'/q/'+this.id+'/answer',
+        url: '/quizzes/'+this.id.$oid+'/test',
         dataType: 'json',
         data: { 'answer' : input }
-      }).done(function(json){
-        if (json.result) self.set("resolved", true);
-      }).fail(function(data) {
-        self.trigger('error');
-      });
+      }).then(
+        function(json){
+          var nextQuiz;
+          if (json.resolved) {
+            self.set("resolved", true);
+            nextQuiz = json.nextQuiz;
+          } else {
+            self.set("resolved", false);
+            nextQuiz = null;
+          }
+          return nextQuiz;
+        },
+        function(data) {
+          this.model.trigger('error');
+        }
+      );
       return defer.promise();
     }
   });

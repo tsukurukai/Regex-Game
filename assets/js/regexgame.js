@@ -1,23 +1,41 @@
 require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatch){
+
   var QuizView = Backbone.View.extend({
     el: '#quiz',
     initialize: function(options){
-      this.listenTo(this.model, 'sync', this.render);
-      this.listenTo(this.model, 'change', this.render);
+      this.mediator = options.mediator;
+      this.listenTo(this.model, 'destory', this.remove);
+    },
+    test: function(answer){
+      var self = this,
+          model = this.model;
+      self.model.test(
+        answer
+      ).then(function(){
+        var resolved = model.get("resolved");
+        if(resolved === true) model.destroy();
+        self.mediator.trigger('answerEnd', resolved);
+      });
     },
     template: _.template("<%- pref %><strong><%- target %></strong><%- suff %>"),
     render: function(){
-      var sentence = this.model.get("sentence");
-      var targetStartIndex = this.model.get("targetStartIndex");
-      var targetEndIndex = this.model.get("targetStartIndex") + this.model.get("targetLength");
-      var pref = sentence.substring(0, targetStartIndex);
-      var target = sentence.substring(targetStartIndex, targetEndIndex);
-      var suff = sentence.substring(targetEndIndex);
+      var self = this,
+          sentence = this.model.get("sentence"),
+          targetStartIndex = this.model.get("targetStartIndex"),
+          targetEndIndex = this.model.get("targetStartIndex") + this.model.get("targetLength"),
+          pref = sentence.substring(0, targetStartIndex),
+          target = sentence.substring(targetStartIndex, targetEndIndex),
+          suff = sentence.substring(targetEndIndex)
+      ;
       this.$el.html(this.template({
         'pref': pref,
         'target': target,
         'suff': suff
       }));
+      return this;
+    },
+    remove: function(){
+      this.$el.html('');
       return this;
     }
   });
@@ -26,8 +44,11 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
     tagName: 'span',
     className: 'answer_item',
     events: { 'click': 'select' },
+    initialize: function(options){
+      this.mediator = options.mediator;
+    },
     select: function(){
-      this.model.trigger('select', this.model);
+      this.mediator.trigger('selectChoiceItem', this.model);
     },
     template: _.template("<%- label %>"),
     render: function(){
@@ -38,65 +59,123 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
 
   var ChoiceItemsView = Backbone.View.extend({
     el: '#choice_items',
+    initialize: function(options){
+      this.mediator = options.mediator;
+    },
     render: function(){
+      var self = this,
+          m = this.mediator;
       this.collection.each(function(item){
         var choiceItemView =
-          new ChoiceItemView({ model: item });
+          new ChoiceItemView({
+            model: item,
+            mediator: m
+          });
         var elem = choiceItemView.render().$el;
-        this.$el.append(elem.get(0));
+        self.$el.append(elem.get(0));
       }, this);
       return this;
     }
   });
 
-
-  var AppView = Backbone.View.extend({
-    el: '#quizapp',
+  var AnswerView = Backbone.View.extend({
+    el: '#answer_form',
+    input: '#answer_in_box',
     events: {
       'click #reg_submit': 'onSubmit'
     },
-    input: $('#answer_in_box'),
-    stopwatch: Stopwatch.init(10).display(document.getElementById('stopwatch')),
-    initialize: function(){
-      this.listenTo(this.model, 'sync', this.render);
-      this.listenTo(this.model, 'error', this.serverErrorAlert);
-    },
-    addInputVal: function(selectedItem) {
-      var s = this.input.val();
-      this.input.val(s + selectedItem.get("label"));
+    initialize: function(options){
+      this.mediator = options.mediator;
     },
     onSubmit: function(){
-      this.stopwatch.stop();
-      var self = this;
-      this.model.test(
-        this.input.val()
-      ).then(function(){
-        if(self.model.get('resolved')){
-          var next = self.model.id + 1;
-          self.model.id = next;
-          self.model.fetch();
-        } else {
-          self.stopwatch.start();
-        }
+      this.mediator.trigger('answer', this.$(this.input).val());
+    },
+    addVal: function(selectedItem) {
+      var input = this.$(this.input);
+      input.val(input.val() + selectedItem.get("label"));
+    },
+    renderAnswerResult: function(resolved){
+      if (resolved) {
+        var input = this.$(this.input);
+        input.val('');
+        input.focus();
+      }
+    }
+  });
+
+  var AppView = Backbone.View.extend({
+    quiz: null,
+    quizCount: 0,
+    stopwatch: Stopwatch.init(10).display(document.getElementById('stopwatch')),
+    initialize: function(){
+      var self = this,
+          mediator = _.extend({}, Backbone.Events),
+          choiceItems = new models.ChoiceItems([
+            { label: '[' }
+           ,{ label: ']' }
+           ,{ label: '(' }
+           ,{ label: ')' }
+           ,{ label: '|' }
+           ,{ label: '.' }
+           ,{ label: '\\w' }
+           ,{ label: '\\d' }
+           ,{ label: 'a-z' }
+           ,{ label: '0-9' }
+           ,{ label: 'A-Z' }
+           ,{ label: '*' }
+           ,{ label: '+' }
+           ,{ label: 'Banana' }
+           ,{ label: 'Apple' }
+           ,{ label: 'Tiger' }
+           ,{ label: 'Cat' }
+          ]),
+          choiceItemsView = new ChoiceItemsView({collection: choiceItems, mediator: mediator}),
+          answerView = new AnswerView({mediator: mediator})
+      ;
+      answerView.listenTo(mediator, 'selectChoiceItem', answerView.addVal);
+      answerView.listenTo(mediator, 'answerEnd', answerView.renderAnswerResult);
+      self.listenTo(mediator, 'answer', function(){ self.stopwatch.stop() });
+      self.listenTo(mediator, 'answerEnd', self.render);
+
+      choiceItemsView.render();
+      answerView.render();
+
+      self.mediator = mediator;
+      self.nextQuiz($('#firstQuizId').val())
+    },
+    nextQuiz: function(){
+      var self = this,
+          defer = $.ajax({
+            scriptCharset: 'utf-8',
+            type: "GET",
+            url: '/quizzes/random',
+            dataType: 'json'
+          });
+      defer.done(function(json){
+        var quiz = new models.Quiz(json),
+            quizView = new QuizView({model: quiz, mediator: self.mediator});
+        self.quizCount = self.quizCount + 1;
+        quizView.listenTo(self.mediator, 'answer', quizView.test);
+        quizView.render();
+        self.render();
+      }).fail(function(data) {
+        // TODO
+        alert('ERRER');
       });
+      return defer.promise();
     },
-    allOkAlert: function(){
-      if(this.model.isAllOk()) alert('ALL OK!!');
-    },
-    serverErrorAlert: function(){
-      alert("Server Error.");
-    },
-    render: function(){
-      if (this.model.get('resolved')) {
+    render: function(resolved){
+      console.log('render');
+      if (resolved && this.quizCount > 5) {
         alert('ALL Quiz is Complete!!');
         location.href = location.href + '/result/input?time='+encodeURIComponent(this.stopwatch.runningTime());
+
       } else {
-        //$('#qnumber').html('Q'+this.model.id);
-        //this.input.val('');
-        //this.input.focus();
-        //if (this.model.id > 1) {
-        //  alert("Let's Next Quiz");
-        //}
+        if (resolved) {
+          this.nextQuiz();
+          alert("Let's Next Quiz");
+        }
+        $('#qnumber').html('Q'+this.quizCount);
         this.stopwatch.start();
       }
       return this;
@@ -110,39 +189,6 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
     }
   });
 
-  var choiceItems = new models.ChoiceItems([
-    { label: '[' }
-   ,{ label: ']' }
-   ,{ label: '(' }
-   ,{ label: ')' }
-   ,{ label: '|' }
-   ,{ label: '.' }
-   ,{ label: '\\w' }
-   ,{ label: '\\d' }
-   ,{ label: 'a-z' }
-   ,{ label: '0-9' }
-   ,{ label: 'A-Z' }
-   ,{ label: '*' }
-   ,{ label: '+' }
-   ,{ label: 'Banana' }
-   ,{ label: 'Apple' }
-   ,{ label: 'Tiger' }
-   ,{ label: 'Cat' }
-  ]);
-
-  var choiceItemsView = new ChoiceItemsView({collection: choiceItems});
-
-  var quiz = new models.Quiz();
-  quiz.id = $('#firstQuizId').val();
-  var quizView = new QuizView({model: quiz});
-  var appView = new AppView({model: quiz});
-
-  var mediator = _.extend({}, Backbone.Events);
-  choiceItems.each(function(choiceItem){
-    mediator.listenTo(choiceItem, 'select', _.bind(appView.addInputVal, appView));
-  });
-
-  quiz.fetch();
-  choiceItemsView.render();
+  var appView = new AppView();
 });
 

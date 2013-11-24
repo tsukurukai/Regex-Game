@@ -185,4 +185,28 @@ class Quiz < BaseModel
   def target_end_index
     @target_start_index + @target_length - 1
   end
+
+  def test(answer)
+    regex = string_to_regex(answer)
+    target = @sentence.slice(@target_start_index..target_end_index)
+    matches = @sentence.scan(regex)
+    first_group_matched = matches[0]
+    if first_group_matched.nil? || first_group_matched.empty?
+      false
+    else
+      target == first_group_matched[0]
+    end
+  end
+
+private
+
+  # convert answer from string to Regular Expression type
+  def string_to_regex(answer)
+    regex_string = '^'
+    # '¥' is required to be replaced to '\'
+    # due to '¥' does differ from '\' especially in mac
+    regex_string << answer.gsub('¥', '\\')
+    regex_string << '$'
+    Regexp.new(regex_string)
+  end
 end

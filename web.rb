@@ -24,6 +24,16 @@ get '/c/:course_id' do
 end
 
 # quiz
+get '/quizzes/random' do
+  quiz = Quiz.find_by_random
+  {
+    id: quiz.id,
+    sentence: quiz.sentence,
+    targetStartIndex: quiz.target_start_index,
+    targetLength: quiz.target_length
+  }.to_json
+end
+
 get '/quizzes/:quiz_id' do
   quiz_id   = params[:quiz_id].to_s
   quiz = Quiz.find_by_id(quiz_id)
@@ -32,6 +42,17 @@ get '/quizzes/:quiz_id' do
     sentence: quiz.sentence,
     targetStartIndex: quiz.target_start_index,
     targetLength: quiz.target_length
+  }.to_json
+end
+
+# quiz
+post '/quizzes/:quiz_id/test' do
+  quiz_id  = params[:quiz_id].to_s
+  answer =  params[:answer]
+  quiz = Quiz.find_by_id(quiz_id)
+  result = quiz.test(answer)
+  {
+    resolved: result
   }.to_json
 end
 
