@@ -3,16 +3,12 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
   Regexgame.Event = _.extend({}, Backbone.Events);
 
   Regexgame.QuizView = Backbone.View.extend({
-    el: '#quiz',
-    initialize: function(options){
-      this.listenTo(this.model, 'change:resolved', this.remove);
-    },
     test: function(answer){
       var that = this;
       that.model.test(
         answer
       ).then(function(){
-        Regexgame.Event.trigger('answerEnd', that.model.get("resolved"));
+        Regexgame.Event.trigger('answerEnd', that, that.model.get("resolved"));
       });
     },
     template: _.template("<%- pref %><strong><%- target %></strong><%- suff %>"),
@@ -30,10 +26,6 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
         'target': target,
         'suff': suff
       }));
-      return this;
-    },
-    remove: function(){
-      if (this.model.get('resolved') === true) this.$el.html('');
       return this;
     }
   });
@@ -118,12 +110,12 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
       answerView.listenTo(Regexgame.Event, 'selectChoiceItem', answerView.addVal);
       answerView.listenTo(Regexgame.Event, 'answerEnd', answerView.renderAnswerResult);
       that.listenTo(Regexgame.Event, 'answer', function(){ that.stopwatch.stop() });
-      that.listenTo(Regexgame.Event, 'answerEnd', that.render);
+      that.listenTo(Regexgame.Event, 'answerEnd', that.handleAnswerEnd);
 
       choiceItemsView.render();
       answerView.render();
 
-      that.nextQuiz($('#firstQuizId').val())
+      that.nextQuiz();
     },
     nextQuiz: function(){
       var that = this,
@@ -138,28 +130,32 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
             quizView = new Regexgame.QuizView({model: quiz});
         that.quizCount = that.quizCount + 1;
         quizView.listenTo(Regexgame.Event, 'answer', quizView.test);
-        quizView.render();
-        that.render();
+        that.render(quizView);
       }).fail(function(data) {
         // TODO
         alert('ERRER');
       });
       return defer.promise();
     },
-    render: function(resolved){
-      if (resolved && this.quizCount > 5) {
-        alert('ALL Quiz is Complete!!');
-        location.href = location.href + '/result/input?time='+encodeURIComponent(this.stopwatch.runningTime());
-
+    handleAnswerEnd: function(quizView, resolved){
+      if (resolved) {
+        quizView.remove();
+        if (this.quizCount === 5) this.renderComplete();
+        else this.nextQuiz();
       } else {
-        if (resolved) {
-          this.nextQuiz();
-          alert("Let's Next Quiz");
-        }
-        $('#qnumber').html('Q'+this.quizCount);
         this.stopwatch.start();
       }
+    },
+    render: function(quizView){
+      if (this.quizCount > 1) alert("Let's Next Quiz");
+      $('#qnumber').html('Q'+this.quizCount);
+      $('#quiz').html(quizView.render().el);
+      this.stopwatch.start();
       return this;
+    },
+    renderComplete: function(){
+      alert('ALL Quiz is Complete!!');
+      location.href = location.href + '/result/input?time='+encodeURIComponent(this.stopwatch.runningTime());
     }
   });
 
