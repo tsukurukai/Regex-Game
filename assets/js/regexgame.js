@@ -64,7 +64,7 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
       'click #reg_submit': 'onSubmit'
     },
     onSubmit: function(){
-      Regexgame.Event.trigger('answer', this.$(this.input).val());
+      Regexgame.Event.trigger('answerStart', this.$(this.input).val());
     },
     addVal: function(selectedItem) {
       var input = this.$(this.input);
@@ -80,7 +80,6 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
   });
 
   Regexgame.AppView = Backbone.View.extend({
-    quiz: null,
     quizCount: 0,
     stopwatch: Stopwatch.init(10).display(document.getElementById('stopwatch')),
     initialize: function(){
@@ -108,8 +107,9 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
           answerView = new Regexgame.AnswerView()
       ;
       answerView.listenTo(Regexgame.Event, 'selectChoiceItem', answerView.addVal);
-      answerView.listenTo(Regexgame.Event, 'answerEnd', answerView.renderAnswerResult);
-      that.listenTo(Regexgame.Event, 'answer', function(){ that.stopwatch.stop() });
+      answerView.listenTo(Regexgame.Event, 'answerEnd',        answerView.renderAnswerResult);
+
+      that.listenTo(Regexgame.Event, 'answerStart',    function(){ that.stopwatch.stop() });
       that.listenTo(Regexgame.Event, 'answerEnd', that.handleAnswerEnd);
 
       choiceItemsView.render();
@@ -129,7 +129,7 @@ require(["backbone", "models", "stopwatch"], function(Backbone, models, Stopwatc
         var quiz = new models.Quiz(json),
             quizView = new Regexgame.QuizView({model: quiz});
         that.quizCount = that.quizCount + 1;
-        quizView.listenTo(Regexgame.Event, 'answer', quizView.test);
+        quizView.listenTo(Regexgame.Event, 'answerStart', quizView.test);
         that.render(quizView);
       }).fail(function(data) {
         // TODO
