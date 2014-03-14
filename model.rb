@@ -139,7 +139,7 @@ end
 
 class Quiz < BaseModel
   attr_reader :id, :sentence, :target_start_index, :target_length
-  def initialize(id, sentence, target_start_index, target_length)
+  def initialize(sentence, target_start_index, target_length, id=nil)
     @id = id
     @sentence = sentence
     @target_start_index = target_start_index
@@ -149,7 +149,7 @@ class Quiz < BaseModel
   def self.all()
     res = Array.new
     db.collection('quizzes').find().each{|co|
-      res.push(Quiz.new(co['_id'], co['sentence'], co['target_start_index'], co['target_length']))
+      res.push(Quiz.new(co['sentence'], co['target_start_index'], co['target_length'], co['_id']))
     }
     return res
   end
@@ -162,7 +162,7 @@ class Quiz < BaseModel
     count = db.collection('quizzes').count()
     random = rand count
     res = db.collection('quizzes').find().limit(-1).skip(random).next
-    Quiz.new(res['_id'], res['sentence'], res['target_start_index'], res['target_length'])
+    Quiz.new(res['sentence'], res['target_start_index'], res['target_length'], res['_id'])
   end
 
   def self.find_by_id(id)
@@ -170,7 +170,7 @@ class Quiz < BaseModel
     if row.nil?
       nil
     else
-      Quiz.new(row['_id'], row['sentence'], row['target_start_index'], row['target_length'])
+      Quiz.new(row['sentence'], row['target_start_index'], row['target_length'], row['_id'])
     end
   end
 
