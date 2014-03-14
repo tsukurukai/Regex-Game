@@ -7,6 +7,7 @@ require 'pp'
 require 'model'
 
 class User < Sinatra::Base
+  enable :sessions
 
   if development?
     require 'sinatra/reloader'
@@ -23,12 +24,20 @@ class User < Sinatra::Base
   get '/c/:course_id' do
     @course_id = params[:course_id]
     @quiz = Quiz.find_by_random
+    session['showd_quizes'] = []
     erb :quiz
   end
 
   # quiz
   get '/quizzes/random' do
     quiz = Quiz.find_by_random
+    i = 0
+    while session['showd_quizes'].include? quiz.id
+      quiz = Quiz.find_by_random
+      i = i + 1
+      break if i > 10
+    end
+    session['showd_quizes'].push quiz.id
     {
       id: quiz.id,
       sentence: quiz.sentence,
