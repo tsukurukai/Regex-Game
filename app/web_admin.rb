@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+require 'sinatra/base'
+require 'json'
+require 'erb'
+require 'pp'
+
+require 'model'
+
 class Admin < Sinatra::Base
 
     if development?
@@ -36,5 +43,3 @@ class Admin < Sinatra::Base
         erb(template, options.merge(:layout => :'admin/layout')) 
     end
 end
-
-use Admin;
