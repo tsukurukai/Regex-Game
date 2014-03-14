@@ -15,7 +15,6 @@ class User < Sinatra::Base
 
   # TOP
   get '/' do
-    @courses = Course.all
     erb :index
   end
 
@@ -38,17 +37,6 @@ class User < Sinatra::Base
     }.to_json
   end
 
-  get '/quizzes/:quiz_id' do
-    quiz_id   = params[:quiz_id].to_s
-    quiz = Quiz.find_by_id(quiz_id)
-    {
-      id: quiz.id,
-      sentence: quiz.sentence,
-      targetStartIndex: quiz.target_start_index,
-      targetLength: quiz.target_length
-    }.to_json
-  end
-
   # quiz
   post '/quizzes/:quiz_id/test' do
     quiz_id  = params[:quiz_id].to_s
@@ -58,28 +46,6 @@ class User < Sinatra::Base
     {
       resolved: result
     }.to_json
-  end
-
-  # render quiz
-  get '/c/:course_id/q/:quiz_id' do
-    @course_id = params[:course_id]
-    @quiz_id   = params[:quiz_id]
-    course = Course.find_by_id(@course_id.to_i)
-    quiz = course.quiz(@quiz_id.to_i)
-    count = course.quiz_length
-    is_finish = @quiz_id.to_i > count.to_i
-    {isFinish: is_finish, quiz: quiz}.to_json
-  end
-
-  # quiz
-  # answer check
-  post '/c/:course_id/q/:quiz_id/answer' do
-    @course_id = params[:course_id]
-    @quiz_id = params[:quiz_id]
-    @answer =  params[:answer]
-    # answer check
-    course = Course.find_by_id(@course_id.to_i)
-    course.check_answer(@answer, @quiz_id).to_json
   end
 
   # result
