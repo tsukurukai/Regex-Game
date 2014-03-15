@@ -151,19 +151,24 @@
            ,{ label: ']' }
            ,{ label: '(' }
            ,{ label: ')' }
+           ,{ label: '{' }
+           ,{ label: '}' }
+           ,{ label: ',' }
            ,{ label: '|' }
+           ,{ label: '\\' }
            ,{ label: '.' }
+           ,{ label: '?' }
            ,{ label: '\\w' }
+           ,{ label: '\\W' }
+           ,{ label: '\\s' }
+           ,{ label: '\\S' }
            ,{ label: '\\d' }
+           ,{ label: '\\D' }
            ,{ label: 'a-z' }
            ,{ label: '0-9' }
            ,{ label: 'A-Z' }
            ,{ label: '*' }
            ,{ label: '+' }
-           ,{ label: 'Banana' }
-           ,{ label: 'Apple' }
-           ,{ label: 'Tiger' }
-           ,{ label: 'Cat' }
           ]),
           choiceItemsView = new Regexgame.ChoiceItemsView({collection: choiceItems}),
           answerView = new Regexgame.AnswerView()
