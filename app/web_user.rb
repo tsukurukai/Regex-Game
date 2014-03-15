@@ -40,9 +40,7 @@ class User < Sinatra::Base
     session['showd_quizes'].push quiz.id
     {
       id: quiz.id,
-      sentence: quiz.sentence,
-      targetStartIndex: quiz.target_start_index,
-      targetLength: quiz.target_length
+      items: quiz.items,
     }.to_json
   end
 

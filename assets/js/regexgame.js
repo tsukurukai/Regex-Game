@@ -12,21 +12,29 @@
         Regexgame.Event.trigger('answerEnd', that, that.model.get("resolved"));
       });
     },
-    template: _.template("<%- pref %><strong><%- target %></strong><%- suff %>"),
+    template: _.template(
+        "<ul>"
+      + "<% _.each(list, function(item){ %>"
+      + "<li><%- item.pref %><strong><%- item.target %></strong><%- item.suff %></li>"
+      + "<% }); %>"
+      + "</ul>"
+    ),
     render: function(){
-      var that = this,
-          sentence = this.model.get("sentence"),
-          targetStartIndex = this.model.get("targetStartIndex"),
-          targetEndIndex = this.model.get("targetStartIndex") + this.model.get("targetLength"),
-          pref = sentence.substring(0, targetStartIndex),
-          target = sentence.substring(targetStartIndex, targetEndIndex),
-          suff = sentence.substring(targetEndIndex)
-      ;
-      this.$el.html(this.template({
-        'pref': pref,
-        'target': target,
-        'suff': suff
-      }));
+      var items = this.model.get('items');
+      var params = _.map(items, function(item){
+        var sentence = item.sentence,
+            targetStartIndex = item.target_start_index,
+            targetEndIndex = targetStartIndex + item.target_length,
+            pref = sentence.substring(0, targetStartIndex),
+            target = sentence.substring(targetStartIndex, targetEndIndex),
+            suff = sentence.substring(targetEndIndex);
+        return {
+          'pref': pref,
+          'target': target,
+          'suff': suff
+        }
+      });
+      this.$el.html(this.template({ list: params }));
       return this;
     }
   });
