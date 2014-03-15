@@ -84,6 +84,8 @@
         var input = this.$(this.input);
         input.val('');
         input.focus();
+      } else {
+        this.$(this.input).effect('shake', '', 300);
       }
     }
   });
