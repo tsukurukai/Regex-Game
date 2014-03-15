@@ -1,4 +1,6 @@
-define(["backbone"], function(Backbone){
+(function(){
+  if (!this.Regexgame) this.Regexgame = {};
+  var Regexgame = this.Regexgame;
   var Quiz = Backbone.Model.extend({
     defaults: {
       sentence: '',
@@ -44,11 +46,8 @@ define(["backbone"], function(Backbone){
     model: Item
   });
 
-  var module = {
-    Quiz: Quiz,
-    Item: Item,
-    ChoiceItems: ChoiceItems
-  };
-  return module;
-});
+  Regexgame.Quiz = Quiz;
+  Regexgame.Item = Item;
+  Regexgame.ChoiceItems = ChoiceItems;
+}());
 
