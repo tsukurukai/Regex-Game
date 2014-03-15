@@ -1,0 +1,59 @@
+<script>
+function deleteSentence(id){
+}
+
+</script>
+<style>
+.quizbox {
+  border-bottom: solid 1px #000;
+  padding-bottom: 10px;
+}
+
+table.list td span{
+    color:gray;
+}
+table.list td#sent{
+    word-break:break-all;
+    width:700px;
+}
+
+table.list td.but{
+    text-align:center;
+    width:60px;
+}
+
+#target {
+  font-size: 0.7em;
+}
+
+</style>
+
+<h1>[Quiz List]</h1>
+<p><a href="/admin/quizzes/new">new quiz</a></p>
+
+<div style="margin-top: 50px"></div>
+<% @results.each_with_index do |quiz, i| %>
+<div class="quizbox">
+  <p>
+    QuizID&nbsp;=&nbsp;<%= quiz['id'] %>
+    <p class='but'><input type='button' value='delete' id='but_<%= i %>' onclick='deleteQuiz(<%= i %>);' /></p>
+  </p>
+  <table class='list'>
+  <thead><tr><th style="width:600px;">Item List</th></tr></thead>
+  <tbody>
+  <% quiz['items'].each do |item| %>
+  <tr id='sent_<%= i %>'>
+     <td id='sent'>
+       <%= item[:pref] %><strong style="color:red"><%= item[:target] %></strong><%= item[:suff] %>
+     </td>
+  </tr>
+  <% end %>
+  </tbody>
+  </table>
+</div>
+<% end %>
+
+
+<form method="post" name="form1" id="form1" action='/admin/sentences/save'>
+    <input type="hidden" name="sentences" id="hidsent" value="444" />
+</form>

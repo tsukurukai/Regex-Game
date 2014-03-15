@@ -48,18 +48,20 @@ class Ranking < BaseModel
 end
 
 class Quiz < BaseModel
-  attr_reader :id, :sentence, :target_start_index, :target_length
-  def initialize(sentence, target_start_index, target_length, id=nil)
+  attr_reader :id, :items
+  def initialize(id=nil)
     @id = id
-    @sentence = sentence
-    @target_start_index = target_start_index
-    @target_length = target_length
+    @items = []
   end
 
   def self.all()
     res = Array.new
     db.collection('quizzes').find().each{|co|
-      res.push(Quiz.new(co['sentence'], co['target_start_index'], co['target_length'], co['_id']))
+      quiz = Quiz.new(co['_id'])
+      co['items'].each do |s|
+        quiz.push(s)
+      end
+      res.push(quiz)
     }
     return res
   end
@@ -72,7 +74,9 @@ class Quiz < BaseModel
     count = db.collection('quizzes').count()
     random = rand count
     res = db.collection('quizzes').find().limit(-1).skip(random).next
-    Quiz.new(res['sentence'], res['target_start_index'], res['target_length'], res['_id'])
+    quiz = Quiz.new(res['_id'])
+    res['items'].each do |s| quiz.push(s) end
+    quiz
   end
 
   def self.find_by_id(id)
@@ -80,15 +84,24 @@ class Quiz < BaseModel
     if row.nil?
       nil
     else
-      Quiz.new(row['sentence'], row['target_start_index'], row['target_length'], row['_id'])
+      quiz = Quiz.new(row['_id'])
+      row['items'].each do |s| quiz.push(s) end
+      quiz
     end
+  end
+
+  def push(args={})
+    args = {
+      "sentence" => nil,
+      "target_start_index" => nil,
+      "target_length" => nil,
+    }.merge(args)
+    @items.push(args)
   end
 
   def save
     h = Hash.new
-    h['sentence'] = @sentence
-    h['target_start_index'] = @target_start_index
-    h['target_length'] = @target_length
+    h['items'] = @items
     Ranking.db.collection('quizzes').insert(h)
   end
 
@@ -98,14 +111,17 @@ class Quiz < BaseModel
 
   def test(answer)
     regex = string_to_regex(answer)
-    target = @sentence.slice(@target_start_index..target_end_index)
-    matches = @sentence.scan(regex)
-    first_group_matched = matches[0]
-    if first_group_matched.nil? || first_group_matched.empty?
-      false
-    else
-      target == first_group_matched[0]
+    misses = @items.reject do |item|
+      target = item.sentence.slice((item.target_start_index)..(item.target_end_index))
+      matches = item.sentence.scan(regex)
+      first_group_matched = matches[0]
+      if first_group_matched.nil? || first_group_matched.empty?
+        false
+      else
+        target == first_group_matched[0]
+      end
     end
+    misses.size == 0
   end
 
 private

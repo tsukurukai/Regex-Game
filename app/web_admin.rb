@@ -14,29 +14,46 @@ class Admin < Sinatra::Base
     end
 
     get '/admin/' do
-        admin_erb :'admin/index' 
+        admin_erb :'admin/index'
     end
 
-    get '/admin/sentences/list' do
-        @results = Quiz.all.map do |val|
-          {
-            target_start_index: val.target_start_index,
-            target_length: val.target_length,
-            pref: val.sentence.slice(0, val.target_start_index),
-            target: val.sentence.slice(val.target_start_index..(val.target_end_index)),
-            suff: val.sentence.slice((val.target_end_index + 1)..val.sentence.length),
-          }
+    get '/admin/quizzes/list' do
+        @results = Quiz.all.map do |quiz|
+          res = {}
+          res['id'] = quiz.id.to_s
+          res['items'] = quiz.items.map do |item|
+            target_start_index = item["target_start_index"]
+            target_length= item["target_length"]
+            target_last_index = target_start_index + target_length - 1
+            {
+              target_start_index: target_start_index,
+              target_length: target_length,
+              pref: item["sentence"].slice(0, target_start_index),
+              target: item["sentence"].slice(target_start_index..target_last_index),
+              suff: item["sentence"].slice((target_last_index + 1)..item["sentence"].length),
+            }
+          end
+          res
         end
-        admin_erb :"admin/sentences/list"
+        admin_erb :"admin/quizzes/list"
     end
 
-    post '/admin/sentences/save' do
-        Quiz.drop;
-        JSON.parse(params[:sentences]).each{|baka|
-            Quiz.new(baka["sentence"], baka["targetStartIndex"], baka["targetLength"]).save;
-        }
-        @results = Quiz.all
-        redirect "/admin/sentences/list"
+    get '/admin/quizzes/new' do
+        admin_erb :"admin/quizzes/new"
+    end
+
+    post '/admin/quizzes/save' do
+      quiz = Quiz.new
+      JSON.parse(params[:quizzes]).each{|param|
+        quiz.push(
+          "sentence" => param["sentence"],
+          "target_start_index" => param["targetStartIndex"],
+          "target_length" => param["targetLength"]
+        )
+      }
+      quiz.save
+      @results = Quiz.all
+      redirect "/admin/quizzes/list"
     end
 
     def admin_erb(template, options={}) 
