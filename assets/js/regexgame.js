@@ -79,7 +79,7 @@
       var input = this.$(this.input);
       input.val(input.val() + selectedItem.get("label"));
     },
-    renderAnswerResult: function(resolved){
+    renderAnswerResult: function(view, resolved){
       if (resolved) {
         var input = this.$(this.input);
         input.val('');
