@@ -193,6 +193,8 @@
         }]
       });
 
+      $('#reg_submit').button();
+
       answerView.listenTo(Regexgame.Event, 'selectChoiceItem', answerView.addVal);
       answerView.listenTo(Regexgame.Event, 'answerEnd',        answerView.renderAnswerResult);
 

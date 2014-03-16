@@ -163,6 +163,7 @@ div#answer p#choice_items span.answer_item  {
 
 div#answer p#submit {
   clear: both;
+  padding: 2em 0;
 }
 
 
