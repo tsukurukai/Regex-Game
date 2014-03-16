@@ -5,6 +5,7 @@
  **************/
 
 body {
+  background: #eceadf url(/js/lib/jquery-ui-1.10.4.custom/css/pepper-grinder/images/ui-bg_fine-grain_10_eceadf_60x60.png) 50% 50% repeat;
   font-family: Verdana, Arial, sans-serif;
   line-height: 1.5;
   margin: auto 10px;

@@ -122,16 +122,60 @@
           choiceItemsView = new Regexgame.ChoiceItemsView({collection: choiceItems}),
           answerView = new Regexgame.AnswerView()
       ;
+
+      $('#dialog').dialog({
+        autoOpen: false,
+        modal: true,
+        draggable: false,
+        resizable: false,
+        close: function( event, ui ) {
+          that.stopwatch.start();
+          that.setEnterButton(1);
+        },
+        buttons: [{
+          text: "OK",
+          click: function(){
+            that.closeDialog();
+          }
+        }]
+      });
+
       answerView.listenTo(Regexgame.Event, 'selectChoiceItem', answerView.addVal);
       answerView.listenTo(Regexgame.Event, 'answerEnd',        answerView.renderAnswerResult);
 
-      that.listenTo(Regexgame.Event, 'answerStart',    function(){ that.stopwatch.stop() });
+      that.listenTo(Regexgame.Event, 'answerStart', function(){
+        that.stopwatch.stop();
+      });
       that.listenTo(Regexgame.Event, 'answerEnd', that.handleAnswerEnd);
 
       choiceItemsView.render();
       answerView.render();
 
       that.nextQuiz();
+      that.stopwatch.start();
+      that.setEnterButton(1);
+    },
+    closeDialog: function(){
+      $('#dialog').dialog("close");
+    },
+    setEnterButton: function(type){
+      var that = this;
+      $(window).unbind('keypress');
+      if (type === 1) {
+        $(window).keypress(function(ev){
+          if((ev.which && ev.which === 13) || (ev.keyCode && ev.keyCode === 13)) {
+            $('#reg_submit').click();
+            return false;
+          }
+        });
+      } else {
+        $(window).keypress(function(ev){
+          if((ev.which && ev.which === 13) || (ev.keyCode && ev.keyCode === 13)) {
+            that.closeDialog();
+            return false;
+          }
+        });
+      }
     },
     nextQuiz: function(){
       var that = this,
@@ -163,22 +207,23 @@
       }
     },
     render: function(quizView){
-      if (this.quizCount > 1) alert("Let's Next Quiz");
+      if (this.quizCount > 1) {
+        this.setEnterButton(2);
+        $('#dialog').dialog('option', 'title', "Let's NextQuiz")
+                    .dialog("open");
+      }
       $('#qnumber').html('Q'+this.quizCount);
       $('#quiz').html(quizView.render().el);
-      this.stopwatch.start();
       return this;
     },
     renderComplete: function(){
-      alert('ALL Quiz is Complete!!');
-      location.href = location.href + '/result/input?time='+encodeURIComponent(this.stopwatch.runningTime());
-    }
-  });
-
-  $(window).keypress(function(ev){
-    if((ev.which && ev.which === 13) || (ev.keyCode && ev.keyCode === 13)) {
-      $('#reg_submit').click();
-      return false;
+      var nextUrl = location.href + '/result/input?time='+encodeURIComponent(this.stopwatch.runningTime());
+      this.setEnterButton(2);
+      $('#dialog').dialog('option', 'title', 'ALL Quiz is Complete!!')
+                  .dialog('option', 'close', function(){
+                    location.href = nextUrl;
+                  })
+                  .dialog('open');
     }
   });
 
