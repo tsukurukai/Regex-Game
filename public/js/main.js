@@ -256,17 +256,17 @@
       if (resolved) {
         quizView.remove();
         if (this.quizCount === 5) this.renderComplete();
-        else this.nextQuiz();
+        else {
+          this.nextQuiz();
+          this.setEnterButton(2);
+          $('#dialog').dialog('option', 'title', "Let's NextQuiz")
+                      .dialog("open");
+        }
       } else {
         this.stopwatch.start();
       }
     },
     render: function(quizView){
-      if (this.quizCount > 1) {
-        this.setEnterButton(2);
-        $('#dialog').dialog('option', 'title', "Let's NextQuiz")
-                    .dialog("open");
-      }
       $('#qnumber').html('Q'+this.quizCount);
       $('#quiz').html(quizView.render().el);
       return this;
