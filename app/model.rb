@@ -70,10 +70,18 @@ class Quiz < BaseModel
     db.collection('quizzes').drop()
   end
 
-  def self.find_by_random
-    count = db.collection('quizzes').count()
-    random = rand count
-    res = db.collection('quizzes').find().limit(-1).skip(random).next
+  def self.find_by_random(excludes = [])
+    docs = db.collection('quizzes').find().to_a
+    xs = docs.reject do |doc|
+      excludes.include? doc['_id']
+    end
+    res =
+      if xs.empty?
+        docs.to_a.sample
+      else
+        xs.sample
+      end
+
     quiz = Quiz.new(res['_id'])
     res['items'].each do |s| quiz.push(s) end
     quiz

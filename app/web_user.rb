@@ -30,13 +30,7 @@ class User < Sinatra::Base
 
   # quiz
   get '/quizzes/random' do
-    quiz = Quiz.find_by_random
-    i = 0
-    while session['showd_quizes'].include? quiz.id
-      quiz = Quiz.find_by_random
-      i = i + 1
-      break if i > 10
-    end
+    quiz = Quiz.find_by_random(session['showd_quizes'])
     session['showd_quizes'].push quiz.id
     {
       id: quiz.id,
