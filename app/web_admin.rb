@@ -13,6 +13,21 @@ class Admin < Sinatra::Base
         register Sinatra::Reloader
     end
 
+    if production?
+      before '/admin*' do
+        @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+        username = ENV['BASIC_AUTH_USERNAME']
+        password = ENV['BASIC_AUTH_PASSWORD']
+        unless @auth.provided? &&
+           @auth.basic? &&
+           @auth.credentials &&
+           @auth.credentials == [username, password]
+          response['WWW-Authenticate'] = %(Basic realm="Restricted Area")
+          throw(:halt, [401, "Not authorized\n"])
+        end
+      end
+    end
+
     get '/admin/' do
         admin_erb :'admin/index'
     end

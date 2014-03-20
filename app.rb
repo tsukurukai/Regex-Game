@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-require 'sinatra'
+require 'sinatra/base'
 $:.push(File.expand_path(File.dirname(__FILE__)) + '/app')
 require 'web_user'
 require 'web_admin'
 
-use User
-use Admin
+class App < Sinatra::Base
+  use User
+  use Admin
+end
