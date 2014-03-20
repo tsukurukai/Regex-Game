@@ -146,6 +146,9 @@
   Regexgame.AppView = Backbone.View.extend({
     quizCount: 0,
     stopwatch: Stopwatch.init(10).display(document.getElementById('stopwatch')),
+    choiceItemsView: null,
+    answerView: null,
+    quizView: null,
     initialize: function(){
       var that = this,
           choiceItems = new Regexgame.ChoiceItems([
@@ -171,10 +174,9 @@
            ,{ label: 'A-Z' }
            ,{ label: '*' }
            ,{ label: '+' }
-          ]),
-          choiceItemsView = new Regexgame.ChoiceItemsView({collection: choiceItems}),
-          answerView = new Regexgame.AnswerView()
-      ;
+          ]);
+      choiceItemsView = new Regexgame.ChoiceItemsView({collection: choiceItems});
+      answerView = new Regexgame.AnswerView();
 
       $('#dialog').dialog({
         autoOpen: false,
@@ -184,6 +186,7 @@
         close: function( event, ui ) {
           that.stopwatch.start();
           that.setEnterButton(1);
+          that.render();
         },
         buttons: [{
           text: "OK",
@@ -206,7 +209,7 @@
       choiceItemsView.render();
       answerView.render();
 
-      that.nextQuiz();
+      that.nextQuiz().done(function(){ that.render(); });
       that.stopwatch.start();
       that.setEnterButton(1);
     },
@@ -241,11 +244,10 @@
             dataType: 'json'
           });
       defer.done(function(json){
-        var quiz = new Regexgame.Quiz(json),
-            quizView = new Regexgame.QuizView({model: quiz});
+        var quiz = new Regexgame.Quiz(json);
+        quizView = new Regexgame.QuizView({model: quiz});
         that.quizCount = that.quizCount + 1;
         quizView.listenTo(Regexgame.Event, 'answerStart', quizView.test);
-        that.render(quizView);
       }).fail(function(data) {
         // TODO
         alert('ERRER');
@@ -266,7 +268,7 @@
         this.stopwatch.start();
       }
     },
-    render: function(quizView){
+    render: function(){
       $('#qnumber').html('Q'+this.quizCount);
       $('#quiz').html(quizView.render().el);
       return this;
