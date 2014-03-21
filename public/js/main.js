@@ -46,9 +46,14 @@
     model: Item
   });
 
+  var AnswerResult = Backbone.Model.extend({
+    defaults: { value: ""}
+  });
+
   Regexgame.Quiz = Quiz;
   Regexgame.Item = Item;
   Regexgame.ChoiceItems = ChoiceItems;
+  Regexgame.AnswerResult = AnswerResult;
 }());
 
 ;(function(){
@@ -119,64 +124,84 @@
     }
   });
 
+  Regexgame.AnswerResultView = Backbone.View.extend({
+    el: '#answer_in_box',
+    initialize: function(){
+      this.listenTo(this.model, 'change', this.render);
+    },
+    render: function(view, resolved){
+      this.$el.val(this.model.get('value'));
+      this.$el.focus();
+      return this;
+    },
+  });
+
   Regexgame.AnswerView = Backbone.View.extend({
-    el: '#answer_form',
-    input: '#answer_in_box',
+    el: '#answer',
     events: {
       'click #reg_submit': 'onSubmit'
     },
+    initialize: function(){
+      var choiceItems = new Regexgame.ChoiceItems([
+         { label: '[' }
+        ,{ label: ']' }
+        ,{ label: '(' }
+        ,{ label: ')' }
+        ,{ label: '{' }
+        ,{ label: '}' }
+        ,{ label: ',' }
+        ,{ label: '|' }
+        ,{ label: '\\' }
+        ,{ label: '.' }
+        ,{ label: '?' }
+        ,{ label: '\\w' }
+        ,{ label: '\\W' }
+        ,{ label: '\\s' }
+        ,{ label: '\\S' }
+        ,{ label: '\\d' }
+        ,{ label: '\\D' }
+        ,{ label: 'a-z' }
+        ,{ label: '0-9' }
+        ,{ label: 'A-Z' }
+        ,{ label: '*' }
+        ,{ label: '+' }
+      ]);
+      this.choiceItemsView  = new Regexgame.ChoiceItemsView({collection: choiceItems});
+
+      this.answerResult     = new Regexgame.AnswerResult();
+      this.answerResultView = new Regexgame.AnswerResultView({model: this.answerResult});
+
+      this.listenTo(Regexgame.Event, 'selectChoiceItem', this.addVal);
+      this.listenTo(Regexgame.Event, 'answerEnd',        this.answerEnd);
+
+      this.choiceItemsView.render();
+      this.answerResultView.render();
+    },
     onSubmit: function(){
-      Regexgame.Event.trigger('answerStart', this.$(this.input).val());
+      this.answerResult.set('value', this.answerResultView.$el.val());
+      Regexgame.Event.trigger('answerStart', this.answerResult.get('value'));
     },
     addVal: function(selectedItem) {
-      var input = this.$(this.input);
-      input.val(input.val() + selectedItem.get("label"));
+      this.answerResult.set('value', this.answerResult.get('value') + selectedItem.get("label"));
     },
-    renderAnswerResult: function(view, resolved){
+    answerEnd: function(view, resolved){
       if (resolved) {
-        var input = this.$(this.input);
-        input.val('');
-        input.focus();
+        this.answerResult.set('value', '');
       } else {
-        this.$(this.input).effect('shake', '', 300);
+        this.answerResultView.$el.effect('shake', '', 300);
       }
-    }
+      return this;
+    },
   });
 
   Regexgame.AppView = Backbone.View.extend({
     quizCount: 0,
     stopwatch: Stopwatch.init(10).display(document.getElementById('stopwatch')),
-    choiceItemsView: null,
     answerView: null,
     quizView: null,
     initialize: function(){
-      var that = this,
-          choiceItems = new Regexgame.ChoiceItems([
-            { label: '[' }
-           ,{ label: ']' }
-           ,{ label: '(' }
-           ,{ label: ')' }
-           ,{ label: '{' }
-           ,{ label: '}' }
-           ,{ label: ',' }
-           ,{ label: '|' }
-           ,{ label: '\\' }
-           ,{ label: '.' }
-           ,{ label: '?' }
-           ,{ label: '\\w' }
-           ,{ label: '\\W' }
-           ,{ label: '\\s' }
-           ,{ label: '\\S' }
-           ,{ label: '\\d' }
-           ,{ label: '\\D' }
-           ,{ label: 'a-z' }
-           ,{ label: '0-9' }
-           ,{ label: 'A-Z' }
-           ,{ label: '*' }
-           ,{ label: '+' }
-          ]);
-      choiceItemsView = new Regexgame.ChoiceItemsView({collection: choiceItems});
-      answerView = new Regexgame.AnswerView();
+      var that = this;
+      that.answerView = new Regexgame.AnswerView();
 
       $('#dialog').dialog({
         autoOpen: false,
@@ -196,21 +221,15 @@
         }]
       });
 
-      $('#reg_submit').button();
-
-      answerView.listenTo(Regexgame.Event, 'selectChoiceItem', answerView.addVal);
-      answerView.listenTo(Regexgame.Event, 'answerEnd',        answerView.renderAnswerResult);
-
       that.listenTo(Regexgame.Event, 'answerStart', function(){
         that.stopwatch.stop();
       });
       that.listenTo(Regexgame.Event, 'answerEnd', that.handleAnswerEnd);
 
-      choiceItemsView.render();
-      answerView.render();
-
-      that.nextQuiz().done(function(){ that.render(); });
-      that.stopwatch.start();
+      that.nextQuiz().done(function(){
+        that.render();
+        that.stopwatch.start();
+      });
       that.setEnterButton(1);
     },
     closeDialog: function(){

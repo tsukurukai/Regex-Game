@@ -46,8 +46,13 @@
     model: Item
   });
 
+  var AnswerResult = Backbone.Model.extend({
+    defaults: { value: ""}
+  });
+
   Regexgame.Quiz = Quiz;
   Regexgame.Item = Item;
   Regexgame.ChoiceItems = ChoiceItems;
+  Regexgame.AnswerResult = AnswerResult;
 }());
 
