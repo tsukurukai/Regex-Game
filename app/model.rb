@@ -118,18 +118,22 @@ class Quiz < BaseModel
   end
 
   def test(answer)
-    regex = string_to_regex(answer)
-    misses = @items.reject do |item|
-      target = item["sentence"].slice((item["target_start_index"])..(item["target_start_index"] + item["target_length"] - 1))
-      matches = item["sentence"].scan(regex)
-      first_group_matched = matches[0]
-      if first_group_matched.nil? || first_group_matched.empty?
-        false
-      else
-        target == first_group_matched[0]
+    begin
+      regex = string_to_regex(answer)
+      misses = @items.reject do |item|
+        target = item["sentence"].slice((item["target_start_index"])..(item["target_start_index"] + item["target_length"] - 1))
+        matches = item["sentence"].scan(regex)
+        first_group_matched = matches[0]
+        if first_group_matched.nil? || first_group_matched.empty?
+          false
+        else
+          target == first_group_matched[0]
+        end
       end
+      misses.size == 0
+    rescue
+      false
     end
-    misses.size == 0
   end
 
 private
