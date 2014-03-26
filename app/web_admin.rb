@@ -13,6 +13,11 @@ class Admin < Sinatra::Base
         register Sinatra::Reloader
     end
 
+  helpers do
+    include Rack::Utils
+    alias_method :h, :escape_html
+  end
+
     if production?
       before '/admin*' do
         @auth ||=  Rack::Auth::Basic::Request.new(request.env)

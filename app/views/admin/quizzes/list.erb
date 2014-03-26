@@ -35,7 +35,7 @@ table.list td.but{
 <% @results.each_with_index do |quiz, i| %>
 <div class="quizbox">
   <p>
-    QuizID&nbsp;=&nbsp;<%= quiz['id'] %>
+    QuizID&nbsp;=&nbsp;<%= h quiz['id'] %>
     <p class='but'><input type='button' value='delete' id='but_<%= i %>' onclick='deleteQuiz(<%= i %>);' /></p>
   </p>
   <table class='list'>
@@ -44,7 +44,7 @@ table.list td.but{
   <% quiz['items'].each do |item| %>
   <tr id='sent_<%= i %>'>
      <td id='sent'>
-       <%= item[:pref] %><strong style="color:red"><%= item[:target] %></strong><%= item[:suff] %>
+       <%= h item[:pref] %><strong style="color:red"><%= h item[:target] %></strong><%= h item[:suff] %>
      </td>
   </tr>
   <% end %>

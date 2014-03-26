@@ -1,6 +1,10 @@
-[Quiz] <br>
+<p>[Quiz]</p>
 <script>
 var line = 0;
+
+function escapeHTML(val){
+  return $('<div />').text(val).html();
+}
 
 function deleteSentence(id){
     if($('#but_'+id).val() == 'undo'){
@@ -33,15 +37,13 @@ function addSentence(){
     if(! $.isNumeric(targetLengthText)) return;
     var startIndex = parseInt(startIndexText);
     var targetLength = parseInt(targetLengthText);
-    console.log(startIndex);
-    console.log(targetLength);
     var target = sentence.substring(startIndex, startIndex + targetLength);
     var pref = sentence.substring(0, startIndex);
     var suf = sentence.substring(startIndex + targetLength);
     var arr = [];
     arr.push('<tr id="sent_'+line+'">');
     arr.push(  '<td id="sent">');
-    arr.push(    pref + '<strong style="color:red">'+target+'</strong>'+suf);
+    arr.push(    escapeHTML(pref) + '<strong style="color:red">'+escapeHTML(target)+'</strong>'+escapeHTML(suf));
     arr.push(    '<input type="hidden" id="targetStartIndex_' +line+'" value="' +startIndex+'" />')
     arr.push(    '<input type="hidden" id="targetLength_' +line+'" value="' +target.length+'" />')
     arr.push(  '</td>');
@@ -73,8 +75,8 @@ function save(){
     $("#hidsent").val($.toJSON(xx));
     $("#form1").submit();
 }
-
 </script>
+
 <style>
 table.list td span{
     color:gray;
@@ -95,11 +97,12 @@ table.list td.but{
 
 </style>
 
+
 <p><label for="sentence">[sentence]</label><div style="width:600px" id='sentence' class='editable' contenteditable></div></p>
 <p><input type="button" value="↓↓↓" onclick="setTarget()" />ドラッグで反転させた内容を反映させる</p>
 <p id="target">
-  <label for="targetStartIndexText">マッチ対象文字列の開始位置</label><input id="targetStartIndexText" class='editable' type='text' />
-  <label for="targetLengthText">マッチ対象文字列の長さ</label><input id="targetLengthText" class='editable' type='text' />
+  <label for="targetStartIndexText">キャプチャ対象文字列の開始位置</label><input id="targetStartIndexText" class='editable' type='text' />
+  <label for="targetLengthText">キャプチャ対象文字列の長さ</label><input id="targetLengthText" class='editable' type='text' />
 </p>
 <p>
   <input type='button' value='add' onclick='addSentence();' />
@@ -114,7 +117,7 @@ table.list td.but{
 </table>
 
 <p>
-  <input id='save' type='button' value='変更を反映' onclick='save();' disabled />
+  <input id='save' type='button' value='Quizを登録する' onclick='save();' disabled />
 </p>
 
 <form method="post" name="form1" id="form1" action='/admin/quizzes/save'>

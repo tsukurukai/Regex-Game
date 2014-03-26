@@ -14,6 +14,11 @@ class User < Sinatra::Base
     register Sinatra::Reloader
   end
 
+  helpers do
+    include Rack::Utils
+    alias_method :h, :escape_html
+  end
+
   # TOP
   get '/' do
     erb :index

@@ -1,8 +1,8 @@
-<h2>Course&nbsp;<%= @course_id %>&nbsp;RANKING</h2>
+<h2>Course&nbsp;<%=h @course_id %>&nbsp;RANKING</h2>
 <form>
   <ol id="result_list">
   <% @ranking_list.each do |result| %>
-    <li class="result_item"><span><%= result[:name] %></span>&nbsp;:&nbsp;<span><%= result[:time] %> s </span></li>
+    <li class="result_item"><span><%=h result[:name] %></span>&nbsp;:&nbsp;<span><%=h result[:time] %> s </span></li>
   <% end %>
 </ol>
 </form>
