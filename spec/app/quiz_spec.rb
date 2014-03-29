@@ -27,8 +27,19 @@ describe Quiz do
   end
 
   describe '#test' do
-    context 'quiz has no items' do
-      specify { @sut.test('[0-9]').should eq false }
+    it 'should false when quiz has no items' do
+      @sut.test('[0-9]').should eq false
+    end
+
+    context 'quiz has a item that is "aa01bb01" and capture target is "01"' do
+      before do
+        @sut.push("sentence" => "aa01bb01", "target_start_index" => 2, "target_length" => 2)
+      end
+
+      specify { @sut.test('').should eq false }
+      specify { @sut.test('aa01bb').should eq false }
+      specify { @sut.test('aa(01)bb').should eq true }
+      specify { @sut.test('aa(\w+)bb').should eq true }
     end
   end
 end

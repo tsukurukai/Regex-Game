@@ -141,11 +141,9 @@ private
 
   # convert answer from string to Regular Expression type
   def string_to_regex(answer)
-    regex_string = '^'
     # '¥' is required to be replaced to '\'
     # due to '¥' does differ from '\' especially in mac
-    regex_string << answer.gsub('¥', '\\')
-    regex_string << '$'
+    regex_string = answer.gsub('¥', '\\')
     Regexp.new(regex_string)
   end
 end
