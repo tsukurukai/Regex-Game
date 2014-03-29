@@ -40,7 +40,15 @@ describe Quiz do
       specify { @sut.test('aa01bb').should eq false }
       specify { @sut.test('aa(01)bb').should eq true }
       specify { @sut.test('aa(\w+)bb').should eq true }
-      specify { @sut.test('(01)').should eq false }
+
+      it "should false when capture multiple" do
+        @sut.test('(01)').should eq false
+      end
+
+      it "should false when invalid regular expression" do
+        @sut.test('aa(01').should eq false
+      end
+
     end
   end
 end
