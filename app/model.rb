@@ -125,7 +125,7 @@ class Quiz < BaseModel
         target = item["sentence"].slice((item["target_start_index"])..(item["target_start_index"] + item["target_length"] - 1))
         matches = item["sentence"].scan(regex)
         first_group_matched = matches[0]
-        if first_group_matched.nil? || first_group_matched.empty?
+        if matches.length > 1 || first_group_matched.nil? || first_group_matched.empty?
           false
         else
           target == first_group_matched[0]

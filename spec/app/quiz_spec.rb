@@ -31,7 +31,7 @@ describe Quiz do
       @sut.test('[0-9]').should eq false
     end
 
-    context 'quiz has a item that is "aa01bb01" and capture target is "01"' do
+    context 'quiz has a item that is "aa01bb01" and capture target is first "01"' do
       before do
         @sut.push("sentence" => "aa01bb01", "target_start_index" => 2, "target_length" => 2)
       end
@@ -40,6 +40,7 @@ describe Quiz do
       specify { @sut.test('aa01bb').should eq false }
       specify { @sut.test('aa(01)bb').should eq true }
       specify { @sut.test('aa(\w+)bb').should eq true }
+      specify { @sut.test('(01)').should eq false }
     end
   end
 end
