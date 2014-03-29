@@ -25,5 +25,11 @@ describe Quiz do
     end
 
   end
+
+  describe '#test' do
+    context 'quiz has no items' do
+      specify { @sut.test('[0-9]').should eq false }
+    end
+  end
 end
 

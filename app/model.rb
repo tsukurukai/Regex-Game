@@ -118,6 +118,7 @@ class Quiz < BaseModel
   end
 
   def test(answer)
+    return false if @items.empty?
     begin
       regex = string_to_regex(answer)
       misses = @items.reject do |item|
