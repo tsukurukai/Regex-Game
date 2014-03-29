@@ -124,7 +124,7 @@
       Regexgame.Event.trigger('answerStart', this.answerResult.get('value'));
     },
     addVal: function(selectedItem) {
-      this.answerResult.set('value', this.answerResult.get('value') + selectedItem.get("label"));
+      this.answerResult.set('value', this.answerResultView.$el.val() + selectedItem.get("label"));
     },
     answerEnd: function(view, resolved){
       if (resolved) {
