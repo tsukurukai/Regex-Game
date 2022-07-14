@@ -1,6 +1,9 @@
 {
   "name": "Regex-Game",
   "version": "0.0.1",
+  "engines":{
+      "node": "16.x"
+  },
   "devDependencies": {
     "grunt": "^1.5.3",
     "grunt-contrib-concat": "^2.1.0",
