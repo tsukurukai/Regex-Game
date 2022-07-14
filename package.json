@@ -2,18 +2,18 @@
   "name": "Regex-Game",
   "version": "0.0.1",
   "devDependencies": {
-    "grunt": "~0.4.4",
-    "grunt-contrib-requirejs": "~0.4.1",
-    "grunt-contrib-watch": "~0.5.3",
-    "karma": "~0.12.0",
-    "mocha": "~1.17.1",
-    "karma-mocha": "~0.1.1",
-    "requirejs": "~2.1.11",
-    "karma-requirejs": "~0.2.1",
+    "grunt": "^1.5.3",
+    "grunt-contrib-concat": "^2.1.0",
+    "grunt-contrib-requirejs": "^1.0.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-karma": "^4.0.2",
+    "karma": "^6.4.0",
     "karma-chrome-launcher": "~0.1.2",
     "karma-coffee-preprocessor": "~0.2.0",
     "karma-expect": "~1.1.0",
-    "grunt-karma": "~0.8.0",
-    "grunt-contrib-concat": "~0.3.0"
+    "karma-mocha": "~0.1.1",
+    "karma-requirejs": "~0.2.1",
+    "mocha": "^10.0.0",
+    "requirejs": "~2.1.11"
   }
 }
